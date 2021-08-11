@@ -1,0 +1,12 @@
+# depslib dependency file v1.0
+1628692663 source:/home/filippo/Scrivania/progettoSO/ProgettoSO/progettoSO/InputManager.c
+	<stdio.h>
+	<stdlib.h>
+
+1628700360 source:/home/filippo/Scrivania/progettoSO/ProgettoSO/progettoSO/main.c
+	<stdio.h>
+	<stdlib.h>
+	<unistd.h>
+	<sys/stat.h>
+	<fcntl.h>
+
