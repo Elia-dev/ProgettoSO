@@ -3,10 +3,19 @@
 	<stdio.h>
 	<stdlib.h>
 
-1628700360 source:/home/filippo/Scrivania/progettoSO/ProgettoSO/progettoSO/main.c
+1628757238 source:/home/filippo/Scrivania/progettoSO/ProgettoSO/progettoSO/main.c
 	<stdio.h>
 	<stdlib.h>
 	<unistd.h>
+	<string.h>
 	<sys/stat.h>
 	<fcntl.h>
+
+1628759065 source:/home/filippo/Scrivania/progettoSO/ProgettoSO/progettoSO/P1.c
+	<stdio.h>
+	<stdlib.h>
+	<sys/types.h>
+	<sys/stat.h>
+	<fcntl.h>
+	<unistd.h>
 
