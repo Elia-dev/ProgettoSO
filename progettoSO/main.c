@@ -28,7 +28,7 @@ void sendToPipe(char *message) {
 
 int main()
 {
-    char *path = "/home/filippo/Scrivania/progettoSO/ProgettoSO/dataset2.csv";
+    char *path = "../dataset2.csv";
     char car;
     FILE *fp;
     int dimRiga = 0;
@@ -51,25 +51,26 @@ int main()
         dimRiga++; // Conta di quanti caratteri è lunga la seconda riga, si assume che le righe abbiano la stessa lunghezza
     }
 
-    printf("dimRiga: %d\n", dimRiga);
+   // printf("dimRiga: %d\n", dimRiga);
 
     fseek(fp, -dimRiga, 1); // Mi riposiziono all'inizio della seconda riga
     char buffer[dimRiga];
 
-    fgets(buffer, dimRiga, fp);
+   // fgets(buffer, dimRiga, fp);
    // strcat(buffer, "\0");
-    sendToPipe(buffer);
-    printf("%s\n\n\n", buffer);
-/*
+    //sendToPipe(buffer);
+   // printf("%s\n\n\n", buffer);
+
    while(!feof(fp)) { // Scorro tutto il file
-        sleep(1);
         fgets(buffer, dimRiga, fp);
+        printf("STRINGA LETTA DA FILE: %s\n\n", buffer);
         sendToPipe(buffer);
+        printf("%s\n\n\n", buffer);
+        sleep(1);
        // sendToSocket(buffer);
        // sendToSharedFile(buffer);
-        printf("%s\n\n\n", buffer);
     }
-*/
+
     close(fd);
     fclose(fp);
     printf("FINE");

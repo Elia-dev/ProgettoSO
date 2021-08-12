@@ -37,6 +37,9 @@
 		<Unit filename="P1.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="P2.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>
