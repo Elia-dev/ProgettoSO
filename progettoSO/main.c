@@ -28,7 +28,7 @@ void sendToPipe(char *message) {
 
 int main()
 {
-    char *path = "/home/filippo/Scrivania/progettoSO/dataset2.csv";
+    char *path = "/home/filippo/Scrivania/progettoSO/ProgettoSO/dataset2.csv";
     char car;
     FILE *fp;
     int dimRiga = 0;
@@ -51,7 +51,7 @@ int main()
         dimRiga++; // Conta di quanti caratteri è lunga la seconda riga, si assume che le righe abbiano la stessa lunghezza
     }
 
-    //printf("dimRiga: %d\n", dimRiga);
+    printf("dimRiga: %d\n", dimRiga);
 
     fseek(fp, -dimRiga, 1); // Mi riposiziono all'inizio della seconda riga
     char buffer[dimRiga];
