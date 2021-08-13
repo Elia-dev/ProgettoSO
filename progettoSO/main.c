@@ -4,47 +4,49 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/un.h>
+#include <signal.h>
 
-#define PIPE "P1"
+#define DEFAULT_PROTOCOL 0
+#define PIPE "pipeP1"
+#define SOCKET "socketP2"
 
 
 int fd;
+int serverFd;
+int clientFd;
 
 int openSocket()
 {
-    /*
-        //int serverFd, clientFd, serverLen, clientLen;
-      struct sockaddr_un serverUNIXAddress; Server address /
-      struct sockaddr serverSockAddrPtr; /Ptr to server address/
-      struct sockaddr_un clientUNIXAddress; /*Client address /
-      struct sockaddr clientSockAddrPtr;/Ptr to client address/
 
-      serverSockAddrPtr = (struct sockaddr) &serverUNIXAddress;
-      serverLen = sizeof (serverUNIXAddress);
-      clientSockAddrPtr = (struct sockaddr) &clientUNIXAddress;
-      clientLen = sizeof (clientUNIXAddress);
+    int serverLen, clientLen;
+    struct sockaddr_un serverUNIXAddress; //Server address
+    struct sockaddr* serverSockAddrPtr; //Ptr to server address
+    struct sockaddr_un clientUNIXAddress; //Client address
+    struct sockaddr* clientSockAddrPtr;//Ptr to client address
 
-      serverFd = socket (AF_UNIX, SOCK_STREAM, DEFAULT_PROTOCOL);
-      serverUNIXAddress.sun_family = AF_UNIX; /* Set domain type /
-      strcpy (serverUNIXAddress.sun_path, "recipe"); / Set name /
-      unlink ("recipe"); / Remove file if it already exists /
-      bind (serverFd, serverSockAddrPtr, serverLen);/Create file/
-      listen (serverFd, 5); / Maximum pending connection length /
-     while (1) {/ Loop forever / / Accept a client connection /
-       clientFd = accept (serverFd, clientSockAddrPtr, &clientLen);
-       if (fork () == 0) { / Create child to send receipe /
-         writeRecipe (clientFd); / Send the recipe /
-         close (clientFd); / Close the socket /
-         exit (/ EXIT_SUCCESS / 0); / Terminate /
-       } else
-         close (clientFd); / Close the client descriptor */
-//}
-//}
+    serverSockAddrPtr = (struct sockaddr*) &serverUNIXAddress;
+    serverLen = sizeof (serverUNIXAddress);
+    clientSockAddrPtr = (struct sockaddr*) &clientUNIXAddress;
+    clientLen = sizeof (clientUNIXAddress);
+
+    serverFd = socket (AF_UNIX, SOCK_STREAM, DEFAULT_PROTOCOL);
+    serverUNIXAddress.sun_family = AF_UNIX; //Set domain type
+    strcpy (serverUNIXAddress.sun_path, "socketP2"); // Set name
+    unlink ("socketP2"); // Remove file if it already exists
+    bind (serverFd, serverSockAddrPtr, serverLen); //Create file
+    listen (serverFd, 1); // Maximum pending connection length
+
+    clientFd = accept (serverFd, clientSockAddrPtr, &clientLen);
+    printf("In attessa di connessioni\n");
+    //writeRecipe(clientFd); // Send the recipe
 }
 
 void sendToSocket(char *message)
 {
-
+    write (clientFd, message, strlen (message) + 1); /* Write first line */
 }
 
 int openPipe()
@@ -75,7 +77,10 @@ int main()
     int dimRiga = 0;
 
     fp = fopen(path, "r"); // Apertura del file in sola lettura
-    fd = openPipe();
+    printf("file aperto\n");
+   // fd = openPipe();
+    serverFd = openSocket();
+    printf("SERVER PRONTO\n");
 
     // Scarto la prima riga leggendola a vuoto
     while(car != '\n')   // Legge la prima riga
@@ -104,19 +109,24 @@ int main()
     //sendToPipe(buffer);
     // printf("%s\n\n\n", buffer);
 
-    while(fgets(buffer, dimRiga, fp))   // Scorro tutto il file !feof(fp)
-    {
+   // while(fgets(buffer, dimRiga, fp))   // Scorro tutto il file
+   // {
 
         printf("STRINGA LETTA DA FILE: %s\n\n", buffer);
-        sendToPipe(buffer);
-        printf("%s\n\n\n", buffer);
+       // sendToPipe(buffer);
+        sendToSocket(buffer);
+        printf("Stringa mandata tramite socket: %s", buffer);
+       // printf("%s\n\n\n", buffer);
         sleep(1);
-        // sendToSocket(buffer);
         // sendToSharedFile(buffer);
-    }
+   // }
 
-    close(fd);
-    fclose(fp);
+    close(fd); // Chiude il file descriptor della pipe
+    fclose(fp); // Chiude il file dataset.csv
+    close(clientFd); //Close the client
+    printf("Client chiuso\n");
+    close(serverFd); //Close the socket
+    printf("Server chiuso\n");
     printf("FINE");
     return 0;
 }

@@ -3,19 +3,28 @@
 	<stdio.h>
 	<stdlib.h>
 
-1628757238 source:/home/filippo/Scrivania/progettoSO/ProgettoSO/progettoSO/main.c
+1628843236 source:/home/filippo/Scrivania/progettoSO/ProgettoSO/progettoSO/main.c
 	<stdio.h>
 	<stdlib.h>
 	<unistd.h>
 	<string.h>
 	<sys/stat.h>
 	<fcntl.h>
+	<sys/types.h>
+	<sys/socket.h>
+	<sys/un.h>
+	<signal.h>
 
-1628759065 source:/home/filippo/Scrivania/progettoSO/ProgettoSO/progettoSO/P1.c
+1628842612 source:/home/filippo/Scrivania/progettoSO/ProgettoSO/progettoSO/P1.c
 	<stdio.h>
 	<stdlib.h>
+	<string.h>
 	<sys/types.h>
 	<sys/stat.h>
 	<fcntl.h>
 	<unistd.h>
+
+1628842612 source:/home/filippo/Scrivania/progettoSO/ProgettoSO/progettoSO/P2.c
+	<stdio.h>
+	<stdlib.h>
 

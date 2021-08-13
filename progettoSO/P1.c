@@ -6,7 +6,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-#define PIPE "P1"
+#define PIPE "pipeP1"
 
 int readLine (int fd, char *str)
 {
