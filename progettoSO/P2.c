@@ -81,7 +81,6 @@ int main()
     {
 		readLine(clientFd, str);
 		count ++;
-		readLine(clientFd, str);
 		printf("Stringa ricevuta: %s\n", str);
 		charSum = sum(str);
 		printf("Somma: %d: ", charSum);
