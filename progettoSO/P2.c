@@ -77,10 +77,9 @@ int main()
     clientFd = openSocket();
     printf("CONNESSIONE APERTA\n");
     int count = 0;
-    while(count < 20)
+    while(readLine(clientFd, str))
     {
-		readLine(clientFd, str);
-		count ++;
+		//count ++;
 		printf("Stringa ricevuta: %s\n", str);
 		charSum = sum(str);
 		printf("Somma: %d: ", charSum);
