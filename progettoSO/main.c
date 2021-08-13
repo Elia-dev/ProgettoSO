@@ -34,8 +34,8 @@ int openSocket()
 
     serverFd = socket (AF_UNIX, SOCK_STREAM, DEFAULT_PROTOCOL);
     serverUNIXAddress.sun_family = AF_UNIX; //Set domain type
-    strcpy (serverUNIXAddress.sun_path, "socketP2"); // Set name
-    unlink ("socketP2"); // Remove file if it already exists
+    strcpy (serverUNIXAddress.sun_path, SOCKET); // Set name
+    unlink (SOCKET); // Remove file if it already exists
     bind (serverFd, serverSockAddrPtr, serverLen); //Create file
     listen (serverFd, 1); // Maximum pending connection length
 
@@ -111,23 +111,32 @@ int main()
 
    // while(fgets(buffer, dimRiga, fp))   // Scorro tutto il file
    // {
-
+fgets(buffer, dimRiga, fp);
         printf("STRINGA LETTA DA FILE: %s\n\n", buffer);
        // sendToPipe(buffer);
+       printf("PRIMA DI SOCKET: %d\n", &buffer);
         sendToSocket(buffer);
-        printf("Stringa mandata tramite socket: %s", buffer);
+        printf("DOPO SOCKET: %d\n", &buffer);
+     /*  printf("STAMPA CON CICLO: ");
+        for(int i = 0; i < dimRiga; i++) {
+            printf("%c", buffer[i]);
+        }*/
+        printf("\nStringa mandata tramite socket: %s", buffer);
+        printf("DOPO STAMPA: %d\n", &buffer);
+      //  printf("\nStringa mandata tramite socket: %s", buffer);
        // printf("%s\n\n\n", buffer);
-        sleep(1);
+       // sleep(1);
         // sendToSharedFile(buffer);
    // }
 
     close(fd); // Chiude il file descriptor della pipe
     fclose(fp); // Chiude il file dataset.csv
     close(clientFd); //Close the client
-    printf("Client chiuso\n");
+    //printf("Client chiuso\n");
     close(serverFd); //Close the socket
-    printf("Server chiuso\n");
-    printf("FINE");
+   //unlink(serverFd);
+   // printf("Server chiuso\n");
+   // printf("FINE");
     return 0;
 }
 

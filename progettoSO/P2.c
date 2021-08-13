@@ -21,7 +21,7 @@ int openSocket()
     serverLen = sizeof (serverUNIXAddress);
     clientFd = socket (AF_UNIX, SOCK_STREAM, DEFAULT_PROTOCOL);
     serverUNIXAddress.sun_family = AF_UNIX; // Server domain /
-    strcpy (serverUNIXAddress.sun_path, "socketP2");//Server name/
+    strcpy (serverUNIXAddress.sun_path, SOCKET);//Server name/
     do   // Loop until a connection is made with the server /
     {
         connection = connect (clientFd, serverSockAddrPtr, serverLen);
