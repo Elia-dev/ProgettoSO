@@ -135,7 +135,7 @@ int main()
 	close(clientFd); //Close the client
 	printf("Client chiuso\n");
 	close(serverFd); //Close the socket
-	unlink(serverFd);
+	//unlink(serverFd);
 	printf("Server chiuso\n");
 // printf("FINE");
     return 0;
