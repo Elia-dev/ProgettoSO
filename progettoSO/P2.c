@@ -20,15 +20,15 @@ int openSocket()
     serverSockAddrPtr = (struct sockaddr*) &serverUNIXAddress;
     serverLen = sizeof (serverUNIXAddress);
     clientFd = socket (AF_UNIX, SOCK_STREAM, DEFAULT_PROTOCOL);
-    serverUNIXAddress.sun_family = AF_UNIX; // Server domain /
-    strcpy (serverUNIXAddress.sun_path, SOCKET);//Server name/
-    do   // Loop until a connection is made with the server /
+    serverUNIXAddress.sun_family = AF_UNIX; // Server domain 
+    strcpy (serverUNIXAddress.sun_path, SOCKET);// Server name
+    do   // Loop until a connection is made with the server 
     {
         connection = connect (clientFd, serverSockAddrPtr, serverLen);
         if (connection == -1) // Se la connessione fallisce
         {
-            printf("Connection problem;re-try in 1 sec\n");
-            sleep (1); // Wait and then try again /
+            printf("Retrying connection in 1 sec\n");
+            sleep (1); // Wait and then try again
         }
     }
     while (connection == -1);
@@ -38,27 +38,14 @@ int openSocket()
 
 int readLine (int fd, char *str)
 {
-    // Read a single '\0'-terminated line into str from fd /
-    // Return 0 when the end-of-input is reached and 1 otherwise /
     int n;
-    do
+    do // Read characters until '\0' or end-of-input
     {
-        // Read characters until '\0' or end-of-input /
-        n = read(fd, str, 1);
+        n = read(fd, str, 1); 
     }
     while (n > 0 && *str++ != '\0');
-    return (n > 0);
-    // Return false if end-of-input /
+    return (n > 0); // Return false if end-of-input
 }
-
-/*
-int readRecipe (int fd)
-{
-    char str[200];
-    while (readLine (fd, str)) // Read lines until end-of-input /
-        printf ("%s\n", str); // Echo line from socket
-}
-*/
 
 int sum(char *str) {
 	int charSum = 0;
@@ -84,7 +71,7 @@ int main()
 		charSum = sum(str);
 		printf("Somma: %d: ", charSum);
     }
-    close (clientFd); // Close the socket /
+    close (clientFd); // Close the socket
     printf("Socket chiusa\n");
     return 0;
 }

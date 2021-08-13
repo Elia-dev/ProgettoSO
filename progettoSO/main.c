@@ -41,7 +41,6 @@ int openSocket()
 
     clientFd = accept (serverFd, clientSockAddrPtr, &clientLen);
     printf("In attessa di connessioni\n");
-    //writeRecipe(clientFd); // Send the recipe
 }
 
 void sendToSocket(char *message)
@@ -90,7 +89,6 @@ int main()
     }
 
     car = 'a'; // Reset del carattere di controllo
-    //printf("\n");
 
     // Conta dimensioni righe
     while(car != '\n')
@@ -98,15 +96,12 @@ int main()
         car = fgetc(fp);
         dimRiga++; // Conta di quanti caratteri è lunga la seconda riga, si assume che le righe abbiano la stessa lunghezza
     }
-    // printf("dimRiga: %d\n", dimRiga);
 
     fseek(fp, -dimRiga, 1); // Mi riposiziono all'inizio della seconda riga
 	dimRiga += 3;
     char buffer[dimRiga];
 
     // fgets(buffer, dimRiga, fp);
-    // strcat(buffer, "\0");
-    //sendToPipe(buffer);
     // printf("%s\n\n\n", buffer);
 
     while(fgets(buffer, dimRiga, fp))  // Scorro tutto il file
@@ -114,18 +109,7 @@ int main()
         printf("STRINGA LETTA DA FILE: %s\n\n", buffer);
         sendToPipe(buffer);
         sendToSocket(buffer);
-
-//printf("PRIMA DI SOCKET: %d\n", &buffer);
-
-        // printf("DOPO SOCKET: %d\n", &buffer);
-        /*  printf("STAMPA CON CICLO: ");
-           for(int i = 0; i < dimRiga; i++) {
-               printf("%c", buffer[i]);
-           }*/
-        //printf("\nStringa mandata tramite PIPE: %s", buffer);
-        // printf("DOPO STAMPA: %d\n", &buffer);
-        //  printf("\nStringa mandata tramite socket: %s", buffer);
-        // printf("%s\n\n\n", buffer);
+		
         sleep(1);
         // sendToSharedFile(buffer);
     }
@@ -135,9 +119,7 @@ int main()
 	close(clientFd); //Close the client
 	printf("Client chiuso\n");
 	close(serverFd); //Close the socket
-	//unlink(serverFd);
 	printf("Server chiuso\n");
-// printf("FINE");
     return 0;
 }
 

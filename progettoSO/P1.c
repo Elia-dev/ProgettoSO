@@ -57,49 +57,24 @@ int main()
 
     fd = open (PIPE, O_RDONLY); //O_RDONLY
     printf("PIPE APERTA");
-    int count = 0;
     while(readLine (fd, str) > 0)
     {
-        /*if(readLine (fd, str) <= 0)
-        {
-            close (fd);
-            // Close pipe
-            unlink(PIPE);
-            // Remove used pipe
-            exit(0);
-        }*/
-        // Leggiamo riga per riga
 		charSum = 0;
         printf("Letto: %s\n\n\n", str);
         str[strlen(str) - 1] = '\0'; // Alla fine di ogni riga viene sovrascritto il carattere "end of trans. block" (valore ascii 23) con '\0'
         token = strtok(str, ",");
-      //  printf("smongolato con end of trans block");
+		
         // Tramite strtok la riga viene spezzata ogni volta che si trova una virgola e il suo valore intero sommato
         while( token != NULL )
         {
-            //printf("-----%s\n", token);
             charSum += sum(token);
-            //printf("%d\n", charSum);
             token = strtok(NULL, ",");
         }
-        //printf("Somma riga %d = %d", count, charSum);
-        //count++;
-        //sendToDecisionFunction(charSum);
-
         printf("somma: %d", charSum);
-        /* do {
-             token = strtok(str, ",");
-             printf("%s", token);
-         }while(token != NULL);*/
-
-        //printf ("%s\n", str);
+        //sendToDecisionFunction(charSum);
     }
-    //printf("SOMMA: %d", charSum);
-    // Send somma to decision function
-    close (fd);
-    // Close pipe /
-    unlink(PIPE);
-    // Remove used pipe */
-
+	
+    close (fd); //Close pipe
+    unlink(PIPE); //Remove used pipe
     return 0;
 }
