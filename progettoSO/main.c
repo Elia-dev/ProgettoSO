@@ -78,8 +78,8 @@ int main()
 
     fp = fopen(path, "r"); // Apertura del file in sola lettura
     printf("file aperto\n");
-    fd = openPipe();
-    //serverFd = openSocket();
+    //fd = openPipe();
+    serverFd = openSocket();
     printf("SERVER PRONTO\n");
 
     // Scarto la prima riga leggendola a vuoto
@@ -112,8 +112,8 @@ int main()
     while(fgets(buffer, dimRiga, fp))  // Scorro tutto il file
     {
         printf("STRINGA LETTA DA FILE: %s\n\n", buffer);
-        sendToPipe(buffer);
-        //sendToSocket(buffer);
+        //sendToPipe(buffer);
+        sendToSocket(buffer);
 
 //printf("PRIMA DI SOCKET: %d\n", &buffer);
 
@@ -130,13 +130,13 @@ int main()
         // sendToSharedFile(buffer);
     }
 
-    close(fd); // Chiude il file descriptor della pipe
+    //close(fd); // Chiude il file descriptor della pipe
     fclose(fp); // Chiude il file dataset.csv
-// close(clientFd); //Close the client
+	close(clientFd); //Close the client
 //printf("Client chiuso\n");
-// close(serverFd); //Close the socket
-//unlink(serverFd);
-// printf("Server chiuso\n");
+	close(serverFd); //Close the socket
+	unlink(serverFd);
+	printf("Server chiuso\n");
 // printf("FINE");
     return 0;
 }

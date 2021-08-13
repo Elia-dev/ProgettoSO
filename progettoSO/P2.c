@@ -60,19 +60,30 @@ int readRecipe (int fd)
 }
 */
 
+int sum(char *str) {
+	int charSum = 0;
+	for(int i = strlen(str)-1; i < 0; i--) {
+		charSum += str[i] * (str[i] != 44);
+	}
+	return charSum;
+}
+
 int main()
 {
     int clientFd;
     char str[700]; // 700 perchè le righe sono grosse circa 550 e sennò va fuori memoria e crasha
+	int charSum = 0;
 
     clientFd = openSocket();
     printf("CONNESSIONE APERTA\n");
     int count = 0;
-   // while(count < 20)
-  //  {
-    readLine(clientFd, str);
-    printf("Stringa ricevuta: %s\n", str);
-   // }
+    while(readLine(clientFd, str))
+    {
+		readLine(clientFd, str);
+		printf("Stringa ricevuta: %s\n", str);
+		charSum = sum(str);
+		printf("Somma: %s: ", charSum);
+    }
     close (clientFd); // Close the socket /
     printf("Socket chiusa\n");
     return 0;
