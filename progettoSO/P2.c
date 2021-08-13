@@ -62,7 +62,7 @@ int readRecipe (int fd)
 
 int sum(char *str) {
 	int charSum = 0;
-	for(int i = strlen(str)-1; i >= 0; i--) {
+	for(int i = strlen(str) - 2; i >= 0; i--) {
 		charSum += str[i] * (str[i] != 44);
 	}
 	return charSum;
