@@ -79,7 +79,7 @@ int main()
     int count = 0;
     while(count < 20)
     {
-		readLine(clientFd, str)
+		readLine(clientFd, str);
 		count ++;
 		readLine(clientFd, str);
 		printf("Stringa ricevuta: %s\n", str);
