@@ -69,6 +69,7 @@ int main()
             exit(0);
         }*/
         // Leggiamo riga per riga
+		charSum = 0;
         printf("Letto: %s\n\n\n", str);
         str[strlen(str) - 1] = '\0'; // Alla fine di ogni riga viene sovrascritto il carattere "end of trans. block" (valore ascii 23) con '\0'
         token = strtok(str, ",");
