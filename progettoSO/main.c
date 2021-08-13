@@ -102,7 +102,7 @@ int main()
     // printf("dimRiga: %d\n", dimRiga);
 
     fseek(fp, -dimRiga, 1); // Mi riposiziono all'inizio della seconda riga
-    char buffer[dimRiga];
+    char buffer[dimRiga+3];
 
     // fgets(buffer, dimRiga, fp);
     // strcat(buffer, "\0");
