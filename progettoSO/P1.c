@@ -85,7 +85,7 @@ int main()
         //count++;
         //sendToDecisionFunction(charSum);
 
-        //printf("somma: %d", charSum);
+        printf("somma: %d", charSum);
         /* do {
              token = strtok(str, ",");
              printf("%s", token);
@@ -93,7 +93,7 @@ int main()
 
         //printf ("%s\n", str);
     }
-    printf("SOMMA: %d", charSum);
+    //printf("SOMMA: %d", charSum);
     // Send somma to decision function
     close (fd);
     // Close pipe /
