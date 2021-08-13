@@ -82,7 +82,7 @@ int main()
 		readLine(clientFd, str);
 		printf("Stringa ricevuta: %s\n", str);
 		charSum = sum(str);
-		printf("Somma: %s: ", charSum);
+		printf("Somma: %d: ", charSum);
     }
     close (clientFd); // Close the socket /
     printf("Socket chiusa\n");
