@@ -98,11 +98,11 @@ int main()
         car = fgetc(fp);
         dimRiga++; // Conta di quanti caratteri è lunga la seconda riga, si assume che le righe abbiano la stessa lunghezza
     }
-
+	dimRiga += 3;
     // printf("dimRiga: %d\n", dimRiga);
 
     fseek(fp, -dimRiga, 1); // Mi riposiziono all'inizio della seconda riga
-    char buffer[dimRiga+3];
+    char buffer[dimRiga];
 
     // fgets(buffer, dimRiga, fp);
     // strcat(buffer, "\0");
