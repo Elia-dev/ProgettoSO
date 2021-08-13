@@ -78,8 +78,8 @@ int main()
 
     fp = fopen(path, "r"); // Apertura del file in sola lettura
     printf("file aperto\n");
-   // fd = openPipe();
-    serverFd = openSocket();
+    fd = openPipe();
+    //serverFd = openSocket();
     printf("SERVER PRONTO\n");
 
     // Scarto la prima riga leggendola a vuoto
@@ -109,34 +109,35 @@ int main()
     //sendToPipe(buffer);
     // printf("%s\n\n\n", buffer);
 
-   // while(fgets(buffer, dimRiga, fp))   // Scorro tutto il file
-   // {
-fgets(buffer, dimRiga, fp);
+    while(fgets(buffer, dimRiga, fp))  // Scorro tutto il file
+    {
         printf("STRINGA LETTA DA FILE: %s\n\n", buffer);
-       // sendToPipe(buffer);
-       printf("PRIMA DI SOCKET: %d\n", &buffer);
-        sendToSocket(buffer);
-        printf("DOPO SOCKET: %d\n", &buffer);
-     /*  printf("STAMPA CON CICLO: ");
-        for(int i = 0; i < dimRiga; i++) {
-            printf("%c", buffer[i]);
-        }*/
-        printf("\nStringa mandata tramite socket: %s", buffer);
-        printf("DOPO STAMPA: %d\n", &buffer);
-      //  printf("\nStringa mandata tramite socket: %s", buffer);
-       // printf("%s\n\n\n", buffer);
-       // sleep(1);
+        sendToPipe(buffer);
+        //sendToSocket(buffer);
+
+//printf("PRIMA DI SOCKET: %d\n", &buffer);
+
+        // printf("DOPO SOCKET: %d\n", &buffer);
+        /*  printf("STAMPA CON CICLO: ");
+           for(int i = 0; i < dimRiga; i++) {
+               printf("%c", buffer[i]);
+           }*/
+        //printf("\nStringa mandata tramite PIPE: %s", buffer);
+        // printf("DOPO STAMPA: %d\n", &buffer);
+        //  printf("\nStringa mandata tramite socket: %s", buffer);
+        // printf("%s\n\n\n", buffer);
+        sleep(1);
         // sendToSharedFile(buffer);
-   // }
+    }
 
     close(fd); // Chiude il file descriptor della pipe
     fclose(fp); // Chiude il file dataset.csv
-    close(clientFd); //Close the client
-    //printf("Client chiuso\n");
-    close(serverFd); //Close the socket
-   //unlink(serverFd);
-   // printf("Server chiuso\n");
-   // printf("FINE");
+// close(clientFd); //Close the client
+//printf("Client chiuso\n");
+// close(serverFd); //Close the socket
+//unlink(serverFd);
+// printf("Server chiuso\n");
+// printf("FINE");
     return 0;
 }
 

@@ -5,6 +5,8 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <errno.h>
+#include <signal.h>
 
 #define PIPE "pipeP1"
 
@@ -51,19 +53,26 @@ int main()
     char str[700]; // 700 perchè le righe sono grosse circa 550 e sennò va fuori memoria e crasha
     char *token;
     int charSum = 0;
-
     createPipe();
 
     fd = open (PIPE, O_RDONLY); //O_RDONLY
     printf("PIPE APERTA");
     int count = 0;
-    while(count < 20)
+    while(readLine (fd, str) > 0)
     {
-        readLine (fd, str); // Leggiamo riga per riga
+        /*if(readLine (fd, str) <= 0)
+        {
+            close (fd);
+            // Close pipe
+            unlink(PIPE);
+            // Remove used pipe
+            exit(0);
+        }*/
+        // Leggiamo riga per riga
         printf("Letto: %s\n\n\n", str);
         str[strlen(str) - 1] = '\0'; // Alla fine di ogni riga viene sovrascritto il carattere "end of trans. block" (valore ascii 23) con '\0'
         token = strtok(str, ",");
-        printf("smongolato con end of trans block");
+      //  printf("smongolato con end of trans block");
         // Tramite strtok la riga viene spezzata ogni volta che si trova una virgola e il suo valore intero sommato
         while( token != NULL )
         {
@@ -72,8 +81,8 @@ int main()
             //printf("%d\n", charSum);
             token = strtok(NULL, ",");
         }
-        printf("Somma riga %d = %d", count, charSum);
-        count++;
+        //printf("Somma riga %d = %d", count, charSum);
+        //count++;
         //sendToDecisionFunction(charSum);
 
         //printf("somma: %d", charSum);
@@ -84,6 +93,8 @@ int main()
 
         //printf ("%s\n", str);
     }
+    printf("SOMMA: %d", charSum);
+    // Send somma to decision function
     close (fd);
     // Close pipe /
     unlink(PIPE);
