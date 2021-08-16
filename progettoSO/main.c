@@ -109,9 +109,9 @@ int main()
         printf("STRINGA LETTA DA FILE: %s\n\n", buffer);
         sendToPipe(buffer);
         sendToSocket(buffer);
-		
+		// sendToSharedFile(buffer);
         sleep(1);
-        // sendToSharedFile(buffer);
+
     }
 
     close(fd); // Chiude il file descriptor della pipe
