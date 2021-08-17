@@ -1,15 +1,40 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
+#include <unistd.h> // For write(), sleep(), read()
 #include <signal.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <fcntl.h>
-#include <sys/un.h>
+#include <sys/un.h> // For AF_UNIX sockets
+#include <arpa/inet.h> // For order byte network
 
 #define FILEPATH "./fileP3"
-#define SOCKETDF "socketDecisionFunction"
 #define DEFAULT_PROTOCOL 0
+#define SOCKETDF "socketDF"
+#define PIDPATH "filePid"
+
+int clientFd;
+
+
+void openSocket()
+{
+    int serverLen, connection;
+    struct sockaddr_un serverUNIXAddress;
+    struct sockaddr* serverSockAddrPtr;
+    serverSockAddrPtr = (struct sockaddr*) &serverUNIXAddress;
+    serverLen = sizeof (serverUNIXAddress);
+    clientFd = socket (AF_UNIX, SOCK_STREAM, DEFAULT_PROTOCOL);
+    serverUNIXAddress.sun_family = AF_UNIX; // Server domain
+    strcpy (serverUNIXAddress.sun_path, SOCKETDF);// Server name
+    do   // Loop until a connection is made with the server
+    {
+        connection = connect (clientFd, serverSockAddrPtr, serverLen);
+        if (connection == -1) // Se la connessione fallisce
+        {
+            printf("Retrying connection in 1 sec\n");
+            sleep (1); // Wait and then try again
+        }
+    }
+    while (connection == -1);
+}
 
 int sum(char *str)
 {
@@ -59,28 +84,58 @@ int random_failure(int attivo)
     else return 0;
 }
 
+void sendToDecisionFunction(int sum)
+{
+    int tmp;
+    if(sum >= 0)
+    {
+        tmp = htonl(3); // Converte sum in network Byte Order
+        write(clientFd, &tmp, sizeof(tmp));
+        tmp = htonl(sum); // Converte sum in network Byte Order
+        write(clientFd, &tmp, sizeof(tmp));
+    }
+    else
+    {
+        tmp = htonl(3); // Converte sum in network Byte Order
+        write(clientFd, &tmp, sizeof(tmp));
+        tmp = htonl(-1); // Converte sum in network Byte Order
+        write(clientFd, &tmp, sizeof(tmp));
+    }
+
+    //write (clientFd, str2, strlen(str2) + 1); /* Write first line */
+}
+
+int generatePid()   //metodo che genera un file contenente il PID di questo processo
+{
+    FILE *fp = fopen(PIDPATH, "a");
+    int pid = getpid();
+    fprintf(fp, "P3: %d\n", pid);
+    fclose(fp);
+}
+
 int main()
 {
     char str[700]; // 700 perchè le righe sono grosse circa 550 e sennò va fuori memoria e crasha
     int charSum = 0;
-    //FILE *fp;
-    // fp = fopen(FILEPATH, "r");
-
-
     int fd;
     fd = open(FILEPATH, O_RDONLY);
-    printf("OPEN\n");
+    generatePid();
 
     while(readLine(fd, str) > 0)
     {
         printf("Stringa letta: %s\n", str);
-        sleep(1);
+
         charSum = sum(str);
-        charSum += random_failure(0);
-        printf("Somma: %d: \n", charSum);
-        //sendToDecisionFunction(charSum);
+        charSum += random_failure(1);
+        openSocket();
+        sendToDecisionFunction(charSum);
+        close(clientFd);
+        sleep(1);
     }
-    close (fd); // Close the socket
+    openSocket();
+    sendToDecisionFunction(-1);
+    close(clientFd);
+    close (fd);
     printf("File chiuso\n");
     return 0;
 }

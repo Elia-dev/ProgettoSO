@@ -31,6 +31,15 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="Avvia.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="DecisionFunction.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="FailureManager.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="InputManager.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -41,12 +50,6 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="P3.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="avvia.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="decisionFunction.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="main.c">

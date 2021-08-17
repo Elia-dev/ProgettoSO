@@ -1,20 +1,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/types.h>
-#include <sys/stat.h>
+#include <sys/stat.h> // For pipe
 #include <sys/socket.h>
-#include <fcntl.h>
-#include <unistd.h>
+#include <fcntl.h> // For open() constants
+#include <unistd.h> // For write(), sleep(), read()...
 #include <sys/un.h> // For AF_UNIX sockets
+#include <arpa/inet.h> // For order byte network
 
 #define PIPE "pipeP1"
 #define DEFAULT_PROTOCOL 0
-#define SOCKETDF "socketDecisionFunction"
+#define SOCKETDF "socketDF"
+#define PIDPATH "filePid"
 
 int clientFd;
 
-int openSocket()
+
+void openSocket()
 {
     int serverLen, connection;
     struct sockaddr_un serverUNIXAddress;
@@ -34,8 +36,6 @@ int openSocket()
         }
     }
     while (connection == -1);
-
-    return clientFd;
 }
 
 int readLine (int fd, char *str)
@@ -85,9 +85,39 @@ int random_failure(int attivo)
     else return 0;
 }
 
-void sendToDecisionFunction(int socket, int sum) {
-    int array[2] = {1, sum};
-    write (clientFd, array, 2); /* Write first line */
+void sendToDecisionFunction(int sum)
+{
+    int tmp;
+
+    tmp = htonl(1); // Converte sum in network Byte Order
+    write(clientFd, &tmp, sizeof(tmp));
+    tmp = htonl(sum); // Converte sum in network Byte Order
+    write(clientFd, &tmp, sizeof(tmp));
+
+    /*if(sum >= 0)
+    {
+        tmp = htonl(1); // Converte sum in network Byte Order
+        write(clientFd, &tmp, sizeof(tmp));
+        tmp = htonl(sum); // Converte sum in network Byte Order
+        write(clientFd, &tmp, sizeof(tmp));
+    }
+    else
+    {
+        tmp = htonl(1); // Converte sum in network Byte Order
+        write(clientFd, &tmp, sizeof(tmp));
+        tmp = htonl(-1); // Converte sum in network Byte Order
+        write(clientFd, &tmp, sizeof(tmp));
+    }
+    */
+    //write (clientFd, str2, strlen(str2) + 1); /* Write first line */
+}
+
+int generatePid()   //metodo che genera un file contenente il PID di questo processo
+{
+    FILE *fp = fopen(PIDPATH, "a");
+    int pid = getpid();
+    fprintf(fp, "P1: %d\n", pid);
+    fclose(fp);
 }
 
 int main()
@@ -96,10 +126,13 @@ int main()
     char str[700]; // 700 perchè le righe sono grosse circa 550 e sennò va fuori memoria e crasha
     char *token;
     int charSum = 0;
+    generatePid();
+
     createPipe();
-    int socket = openSocket();
+    printf("PIPE CREATA\n");
     fd = open (PIPE, O_RDONLY); //O_RDONLY
-    printf("PIPE APERTA");
+    printf("PIPE APERTA\n");
+
     while(readLine (fd, str) > 0)
     {
         charSum = 0;
@@ -113,11 +146,19 @@ int main()
             charSum += sum(token);
             token = strtok(NULL, ",");
         }
-        charSum += random_failure(0);
+        charSum += random_failure(1);
         printf("somma: %d \n", charSum);
-        sendToDecisionFunction(socket, charSum);
+        openSocket();
+        printf("SOCKET APERTO\n");
+        sendToDecisionFunction(charSum);
+        printf("Sdio mandato\n");
+        close(clientFd);
+        sleep(1); // Utilizzato per sincronizzare decisionFunction con P1, P2 e P3
     }
-    close(socket);
+    openSocket();
+    sendToDecisionFunction(-1);
+    close(clientFd);
+    //close(clientFd);
     close (fd); //Close pipe
     unlink(PIPE); //Remove used pipe
     return 0;
