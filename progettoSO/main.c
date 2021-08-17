@@ -12,11 +12,13 @@
 #define DEFAULT_PROTOCOL 0
 #define PIPE "pipeP1"
 #define SOCKET "socketP2"
-
+#define FILEPATH "./fileP3"
 
 int fd;
 int serverFd;
 int clientFd;
+//FILE *fileP3;
+int fd3;
 
 int openSocket()
 {
@@ -40,7 +42,6 @@ int openSocket()
     listen (serverFd, 1); // Maximum pending connection length
 
     clientFd = accept (serverFd, clientSockAddrPtr, &clientLen);
-    printf("In attessa di connessioni\n");
 }
 
 void sendToSocket(char *message)
@@ -62,10 +63,24 @@ int openPipe()
     return fd;
 }
 
-
 void sendToPipe(char *message)
 {
     write (fd, message, strlen(message) + 1); //Write message down pipe
+}
+
+void openSharedFile()
+{
+    fd3 = open(FILEPATH,O_CREAT|O_WRONLY|O_TRUNC, 0777);
+}
+
+void sendToSharedFile(char *message)
+{
+    /* for(int i = 0; i < strlen(message); i++) {
+         printf("INT: %d CHAR: %c", message[i], message[i]);
+     }*/
+    //printf("\n");
+    //fprintf(fileP3, "%s", message);
+    write(fd3, message, strlen(message) + 1);
 }
 
 int main()
@@ -79,7 +94,7 @@ int main()
     printf("file aperto\n");
     fd = openPipe();
     serverFd = openSocket();
-    printf("SERVER PRONTO\n");
+    openSharedFile();
 
     // Scarto la prima riga leggendola a vuoto
     while(car != '\n')   // Legge la prima riga
@@ -98,28 +113,26 @@ int main()
     }
 
     fseek(fp, -dimRiga, 1); // Mi riposiziono all'inizio della seconda riga
-	dimRiga += 3;
+    dimRiga += 3;
     char buffer[dimRiga];
-
-    // fgets(buffer, dimRiga, fp);
-    // printf("%s\n\n\n", buffer);
 
     while(fgets(buffer, dimRiga, fp))  // Scorro tutto il file
     {
         printf("STRINGA LETTA DA FILE: %s\n\n", buffer);
         sendToPipe(buffer);
         sendToSocket(buffer);
-		// sendToSharedFile(buffer);
+        sendToSharedFile(buffer);
         sleep(1);
-
     }
 
-    close(fd); // Chiude il file descriptor della pipe
     fclose(fp); // Chiude il file dataset.csv
-	close(clientFd); //Close the client
-	printf("Client chiuso\n");
-	close(serverFd); //Close the socket
-	printf("Server chiuso\n");
+    close(fd); // Chiude il file descriptor della pipe
+    close(clientFd); //Close the client
+    printf("Client chiuso\n");
+    close(serverFd); //Close the socket
+    printf("Server chiuso\n");
+    close(fd3);
+    //fclose(fileP3);
     return 0;
 }
 
