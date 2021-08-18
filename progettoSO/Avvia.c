@@ -70,65 +70,98 @@ int main(int argc, char *argv[])
     system("rm socketDF & rm fileP3 & rm filePid & rm system_log & rm voted_output & rm failureManager");
     system("cc InputManager.c -o inputManager & cc P1.c -o p1 & cc P2.c -o p2 & cc P3.c -o p3");
     system("cc DecisionFunction.c -o decisionFunction & cc FailureManager.c -o failureManager");
-/*
-provare serie di fork ed exec
-*/
-
-
-
-    int i = 0;
-    while(i < 6)
+    /*
+    provare serie di fork ed exec
+    */
+    if (fork() == 0)
     {
-        printf("VALORE DELLA I: %d\n", i);
-        if (fork() == 0)
-        {
-            if (i == 0)
-            {
-                sleep(3);
-                execl("inputManager", "inputManager", (char *) NULL);
-                //execvp("./inputManager", argv);
-            }
-            else if (i == 1)
-            {
-                sleep(3);
-                execl("p1", "p1", (char *) NULL);
-                //execvp("./decisionFunction", argv);
-            }
-            else if (i == 2)
-            {
-                sleep(3);
-                execl("p2", "p2", (char *) NULL);
-                //execvp("./failureManager", argv);
-            }
-            else if(i == 3)
-            {
-                sleep(3);
-                execl("p3", "p3", (char *) NULL);
-                //execvp("./p1", argv);
-            }
-            else if (i == 4)
-            {
-                sleep(3);
-                execl("decisionFunction", "decisionFunction", (char *) NULL);
-                //execvp("./p2", argv);
-            }
-            else if (i == 5)
-            {
-                sleep(3);
-                execl("failureManager", "failureManager", (char *) NULL);
-                //execvp("./p3", argv);
-            }
-        }
-        i++;
-        usleep(200);
+        printf("--inputManager Avviato\n");
+        execl("inputManager", "inputManager", (char *) NULL);
     }
-
+    usleep(500000);
+    if (fork() == 0)
+    {
+        printf("--p1 Avviato\n");
+        execl("p1", "p1", (char *) NULL);
+    }
+    usleep(400000);
+    if (fork() == 0)
+    {
+        printf("--p2 Avviato\n");
+        execl("p2", "p2", (char *) NULL);
+    }
+    usleep(300000);
+    if (fork() == 0)
+    {
+        printf("--p3 Avviato\n");
+        execl("p3", "p3", (char *) NULL);
+    }
+    usleep(200000);
+    if (fork() == 0)
+    {
+        printf("--decisionFunction Avviato\n");
+        execl("decisionFunction", "decisionFunction", (char *) NULL);
+    }
+    usleep(100000);
+    if (fork() == 0)
+    {
+        printf("--failureManager Avviato\n");
+        execl("failureManager", "failureManager", (char *) NULL);
+    }
+    /*
+            int i = 0;
+            while(i < 6)
+            {
+                printf("VALORE DELLA I: %d\n", i);
+                if (fork() == 0)
+                {
+                    if (i == 0)
+                    {
+                        sleep(3);
+                        execl("inputManager", "inputManager", (char *) NULL);
+                        //execvp("./inputManager", argv);
+                    }
+                    else if (i == 1)
+                    {
+                        sleep(3);
+                        execl("p1", "p1", (char *) NULL);
+                        //execvp("./decisionFunction", argv);
+                    }
+                    else if (i == 2)
+                    {
+                        sleep(3);
+                        execl("p2", "p2", (char *) NULL);
+                        //execvp("./failureManager", argv);
+                    }
+                    else if(i == 3)
+                    {
+                        sleep(3);
+                        execl("p3", "p3", (char *) NULL);
+                        //execvp("./p1", argv);
+                    }
+                    else if (i == 4)
+                    {
+                        sleep(3);
+                        execl("decisionFunction", "decisionFunction", (char *) NULL);
+                        //execvp("./p2", argv);
+                    }
+                    else if (i == 5)
+                    {
+                        sleep(3);
+                        execl("failureManager", "failureManager", (char *) NULL);
+                        //execvp("./p3", argv);
+                    }
+                }
+                i++;
+                usleep(200);
+            }
+        */
 
     for (int i = 0; i < 6; i++)
     {
         int z = wait(NULL);
         printf("\n%d Has crashed stopped", z);
     }
-
+    printf("\n");
     return 0;
 }

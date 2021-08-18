@@ -1,9 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <fcntl.h> // For open() constants
-#include <unistd.h> // For write(), sleep(), read()...
+#include <unistd.h>
 #include <signal.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <sys/un.h> // For AF_UNIX sockets
+#include <arpa/inet.h>
 #include "constHeader.h"
 
 
@@ -27,6 +31,7 @@ void killAll()   // quando ricevo il segnale termino tutti i processi*/
 int main()
 {
     signal(SIGUSR1, killAll);
+    printf("FM: PRONTO");
     generatePid();
     while(1) {
         sleep(1);
