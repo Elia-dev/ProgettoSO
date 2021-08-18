@@ -5,11 +5,7 @@
 #include <sys/socket.h>
 #include <sys/un.h> // For AF_UNIX sockets
 #include <arpa/inet.h> // For order byte network
-
-#define DEFAULT_PROTOCOL 0
-#define SOCKET "socketP2"
-#define SOCKETDF "socketDF"
-#define PIDPATH "filePid"
+#include "constHeader.h"
 
 int openInputManagerSocket()
 {
@@ -134,7 +130,7 @@ int main()
     {
         printf("Stringa ricevuta: %s\n", str);
         charSum = sum(str);
-        charSum += random_failure(1);
+        charSum += random_failure(MODEXEC);
         clientDecisionFunction = openDecisionFunctionSocket();
         //printf("Somma: %d: \n", charSum);
         sendToDecisionFunction(clientDecisionFunction, charSum);

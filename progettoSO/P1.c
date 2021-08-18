@@ -7,14 +7,9 @@
 #include <unistd.h> // For write(), sleep(), read()...
 #include <sys/un.h> // For AF_UNIX sockets
 #include <arpa/inet.h> // For order byte network
-
-#define PIPE "pipeP1"
-#define DEFAULT_PROTOCOL 0
-#define SOCKETDF "socketDF"
-#define PIDPATH "filePid"
+#include "constHeader.h"
 
 int clientFd;
-
 
 void openSocket()
 {
@@ -146,7 +141,7 @@ int main()
             charSum += sum(token);
             token = strtok(NULL, ",");
         }
-        charSum += random_failure(1);
+        charSum += random_failure(MODEXEC);
         printf("somma: %d \n", charSum);
         openSocket();
         printf("SOCKET APERTO\n");

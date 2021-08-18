@@ -6,13 +6,8 @@
 #include <sys/socket.h>
 #include <sys/un.h> // For AF_UNIX sockets
 #include <signal.h>
+#include "constHeader.h"
 
-#define PATHDATASET "../dataset2.csv"
-#define DEFAULT_PROTOCOL 0
-#define PIPE "pipeP1"
-#define SOCKET "socketP2"
-#define FILEPATH "./fileP3"
-#define PIDPATH "filePid"
 
 int fd;
 int serverFd;
@@ -147,7 +142,7 @@ int main()
     close(serverFd); //Close the socket
     printf("Server chiuso\n");
     close(fd3);
-    //fclose(fileP3);
+    unlink(SOCKET);
     return 0;
 }
 

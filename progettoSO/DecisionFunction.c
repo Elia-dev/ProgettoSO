@@ -8,12 +8,7 @@
 #include <fcntl.h>
 #include <sys/un.h> // For AF_UNIX sockets
 #include <arpa/inet.h>
-
-#define DEFAULT_PROTOCOL 0
-#define SOCKETDF "socketDF"
-#define OUTPUT "voted_output"
-#define SYSLOG "system_log"
-#define PIDPATH "filePid"
+#include "constHeader.h"
 
 int serverFd;
 int clientFd;
@@ -48,7 +43,7 @@ int readProcess(int *process)
 }
 */
 
-int generatePid()   //metodo che genera un file contenente il PID di questo processo
+void generatePid()   //metodo che genera un file contenente il PID di questo processo
 {
     FILE *fp = fopen(PIDPATH, "a");
     int pid = getpid();
@@ -56,11 +51,29 @@ int generatePid()   //metodo che genera un file contenente il PID di questo proc
     fclose(fp);
 }
 
+int findPid(char *name) {
+    char *result;
+    int pid;
+    FILE *fp = fopen(PIDPATH, "r");
+
+    do {
+        fgets(result, 15, fp);
+    }while(result[0] != name[0] || result[1] != name[1]); // Legge i vari pid finché non trova quello richiesto
+
+    char *substring;
+    strtok(result, " ");
+    substring = strtok(NULL, " ");
+    pid = atoi(substring);
+    printf("PID trovato: %d\n", pid);
+    return pid;
+}
+
 int main()
 {
     int p1, p2, p3;
     int sommaP1, sommaP2, sommaP3;
     int tmp;
+    int pidFailManager;
     FILE *fpOutput, *fpSysLog;
     generatePid();
     createSocket();
@@ -120,26 +133,16 @@ int main()
             else
             {
                 fprintf(fpSysLog, "FALLIMENTO\n");
-
-             //   kill(pidFailManager, SIGUSR1); //manda un segnale SIGUSR1 a failureManager
+                pidFailManager = findPid("FM");
+                kill(pidFailManager, SIGUSR1); //manda un segnale SIGUSR1 a failureManager
             }
         }
 
 
     }
     while(sommaP1 > 0 || sommaP2 > 0 || sommaP3 > 0);
-
     close(serverFd);
-    /* if(str[0] == 1) {
-         //p1 =
-     }*/
-    //chiudi P1
-    //apri P2
-    //LEGGI DA P2
-    // chiudi p2
-    //apri P3
-    //leggi p3
-    // chiudi p3
+    unlink(SOCKETDF);
 
     return 0;
 }

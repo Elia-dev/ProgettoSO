@@ -2,14 +2,10 @@
 #include <stdlib.h>
 #include <unistd.h> // For write(), sleep(), read()
 #include <signal.h>
-#include <fcntl.h>
+#include <fcntl.h> // For open() constants
 #include <sys/un.h> // For AF_UNIX sockets
 #include <arpa/inet.h> // For order byte network
-
-#define FILEPATH "./fileP3"
-#define DEFAULT_PROTOCOL 0
-#define SOCKETDF "socketDF"
-#define PIDPATH "filePid"
+#include "constHeader.h"
 
 int clientFd;
 
@@ -40,7 +36,8 @@ int sum(char *str)
 {
 /// da influenzare con la funzione random_failure
     int charSum = 0;
-    for(int i = 0; i < strlen(str) - 1; i++) {   // -1 perchè l'ultimo carattere è '\n'
+    for(int i = 0; i < strlen(str) - 1; i++)     // -1 perchè l'ultimo carattere è '\n'
+    {
         charSum += str[i] * (str[i] != 44); // 44 = virgola
         //printf("INT: %d CHAR: %c", str[i], str[i]);
     }
@@ -118,7 +115,16 @@ int main()
     char str[700]; // 700 perchè le righe sono grosse circa 550 e sennò va fuori memoria e crasha
     int charSum = 0;
     int fd;
-    fd = open(FILEPATH, O_RDONLY);
+    do
+    {
+        fd = open(FILEPATH, O_RDONLY);
+        if(fd < 0) {
+            printf("Errore durante l'apertura del file...\n");
+            sleep(1);
+        }
+    }
+    while(fd < 0);
+
     generatePid();
 
     while(readLine(fd, str) > 0)
@@ -126,7 +132,7 @@ int main()
         printf("Stringa letta: %s\n", str);
 
         charSum = sum(str);
-        charSum += random_failure(1);
+        charSum += random_failure(MODEXEC);
         openSocket();
         sendToDecisionFunction(charSum);
         close(clientFd);
