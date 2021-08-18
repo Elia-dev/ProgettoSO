@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <sys/stat.h> // For pipe
 #include <sys/socket.h>
 #include <fcntl.h> // For open() constants
@@ -72,6 +73,7 @@ int sum(char *token)
 
 int random_failure(int attivo)
 {
+    srand(time(NULL));
     // Se random failure è attivo e il numero generato tra 0 e 9 è uguale ad 1 allora genera una failure
     if(attivo && (rand()%10) == 1)
     {
@@ -117,11 +119,11 @@ int generatePid()   //metodo che genera un file contenente il PID di questo proc
 
 int main()
 {
+    generatePid();
     int fd;
     char str[700]; // 700 perchè le righe sono grosse circa 550 e sennò va fuori memoria e crasha
     char *token;
     int charSum = 0;
-    generatePid();
 
     createPipe();
     printf("PIPE CREATA\n");

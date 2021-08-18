@@ -28,8 +28,8 @@ void killAll()   // quando ricevo il segnale termino tutti i processi*/
 
 int main()
 {
-    signal(SIGUSR1, killAll);
     generatePid();
+    signal(SIGUSR1, killAll);
     printf("sus");
     while(1) {
         sleep(1);

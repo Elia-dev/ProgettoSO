@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h> // For write(), sleep(), read()
 #include <signal.h>
+#include <time.h>
 #include <fcntl.h> // For open() constants
 #include <sys/un.h> // For AF_UNIX sockets
 #include <arpa/inet.h> // For order byte network
@@ -73,6 +74,7 @@ int readLine (FILE *fp, char *str)
 
 int random_failure(int attivo)
 {
+    srand(time(NULL));
     // Se random failure è attivo e il numero generato tra 0 e 9 è uguale ad 1 allora genera una failure
     if(attivo && (rand()%10) == 1)
     {
@@ -112,6 +114,7 @@ int generatePid()   //metodo che genera un file contenente il PID di questo proc
 
 int main()
 {
+    generatePid();
     char str[700]; // 700 perchè le righe sono grosse circa 550 e sennò va fuori memoria e crasha
     int charSum = 0;
     int fd;
@@ -125,7 +128,7 @@ int main()
     }
     while(fd < 0);
 
-    generatePid();
+
 
     while(readLine(fd, str) > 0)
     {

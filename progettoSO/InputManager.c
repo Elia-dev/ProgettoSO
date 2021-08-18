@@ -85,6 +85,7 @@ int generatePid()   //metodo che genera un file contenente il PID di questo proc
 {
     FILE *fp;
     fp = fopen(PIDPATH, "a");
+    //system("chmod 777 filePid");
     int pid = getpid();
     fprintf(fp, "IM: %d\n", pid);
     fclose(fp);
@@ -93,10 +94,10 @@ int generatePid()   //metodo che genera un file contenente il PID di questo proc
 int main()
 {
     //char *path = "../dataset2.csv";
+    generatePid();
     char car;
     FILE *fp;
     int dimRiga = 0;
-    generatePid();
     fp = fopen(PATHDATASET, "r"); // Apertura del file in sola lettura
     printf("file dataset aperto\n");
     fd = openPipe();

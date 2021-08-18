@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 #include <signal.h>
 #include <sys/types.h>
@@ -51,31 +52,68 @@ void generatePid()   //metodo che genera un file contenente il PID di questo pro
     fclose(fp);
 }
 
-int findPid(char *name) {
+
+int readLine (FILE *fp, char *str)
+{
+    char car;
+    int i = 0;
+    do
+    {
+        car = fgetc(fp); // Leggendo carattere per carattere
+        str[i++] = car;
+        printf("%c", car);
+    }
+    while(car > 0 && car != '\n');
+    return (car != EOF);
+}
+
+
+int findPid(char *name)
+{
+    printf("entro in findPid\n");
     char *result;
     int pid;
+
     FILE *fp = fopen(PIDPATH, "r");
+    printf("aperto filePid\n");
 
     do {
-        fgets(result, 15, fp);
-    }while(result[0] != name[0] || result[1] != name[1]); // Legge i vari pid finché non trova quello richiesto
+        readLine(fp, result);
+        printf("%s", result);
+    } while(result[0] != name[0] || result[1] != name[1]);
+    //char car;
+  /*  do
+    {
+        //car = fgetc(fp);
+        if(fgets(result, 15, fp) == NULL) {
 
+        }
+        printf("%s", result);
+        //printf("%c", car);
+    }
+    //while(car != '\n');
+    while(result[0] != name[0] || result[1] != name[1]);  // Legge i vari pid finché non trova quello richiesto
+    printf("riga trovata\n");*/
     char *substring;
     strtok(result, " ");
+    printf("primo strtok\n");
     substring = strtok(NULL, " ");
+    printf("secondo strtok\n");
     pid = atoi(substring);
     printf("PID trovato: %d\n", pid);
+    fclose(fp);
     return pid;
 }
 
 int main()
 {
+    generatePid();
     int p1, p2, p3;
     int sommaP1, sommaP2, sommaP3;
     int tmp;
     int pidFailManager;
     FILE *fpOutput, *fpSysLog;
-    generatePid();
+
     createSocket();
     printf("socket creato\n");
     fpOutput = fopen(OUTPUT, "w"); // Apertura del file
@@ -133,6 +171,9 @@ int main()
             else
             {
                 fprintf(fpSysLog, "FALLIMENTO\n");
+                fclose(fpSysLog);
+                fclose(fpOutput);
+                printf("FALLIMENTO\n");
                 pidFailManager = findPid("FM");
                 kill(pidFailManager, SIGUSR1); //manda un segnale SIGUSR1 a failureManager
             }
@@ -141,6 +182,8 @@ int main()
 
     }
     while(sommaP1 > 0 || sommaP2 > 0 || sommaP3 > 0);
+    //fclose(fpSysLog);
+    //fclose(fpOutput);
     close(serverFd);
     unlink(SOCKETDF);
 
