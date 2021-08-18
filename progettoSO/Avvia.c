@@ -4,12 +4,10 @@
 #include<fcntl.h>
 #include<string.h>
 #include<sys/stat.h>
-#include <sys/wait.h>
+#include <wait.h>
 
 int main(int argc, char *argv[])
 {
-    //umask(0000);
-    //system("chmod 777 ./");
     int zero = 0;
     int uno = 1;
     FILE *fp = fopen("constHeader.h", "w"); // da dare percorso giusto
@@ -67,49 +65,70 @@ int main(int argc, char *argv[])
         // close(fdrisultato);
         exit(-1);
     }
+
+    system("rm inputManager & rm p1 & rm p2 & rm p3 & rm pipeP1 & rm decisionFunction & rm socketP2");
+    system("rm socketDF & rm fileP3 & rm filePid & rm system_log & rm voted_output & rm failureManager");
+    system("cc InputManager.c -o inputManager & cc P1.c -o p1 & cc P2.c -o p2 & cc P3.c -o p3");
+    system("cc DecisionFunction.c -o decisionFunction & cc FailureManager.c -o failureManager");
 /*
-    for (int i = 0; i <6; i++)
+provare serie di fork ed exec
+*/
+
+
+
+    int i = 0;
+    while(i < 6)
     {
+        printf("VALORE DELLA I: %d\n", i);
         if (fork() == 0)
         {
             if (i == 0)
             {
-                //execl("./inputManager", );
-                execvp("./inputManager", argv);
+                sleep(3);
+                execl("inputManager", "inputManager", (char *) NULL);
+                //execvp("./inputManager", argv);
             }
             else if (i == 1)
             {
-                execvp("./p1", argv);
+                sleep(3);
+                execl("p1", "p1", (char *) NULL);
+                //execvp("./decisionFunction", argv);
             }
             else if (i == 2)
             {
-                execvp("./p2", argv);
+                sleep(3);
+                execl("p2", "p2", (char *) NULL);
+                //execvp("./failureManager", argv);
             }
             else if(i == 3)
             {
-                sleep(1);
-                execvp("./p3", argv);
+                sleep(3);
+                execl("p3", "p3", (char *) NULL);
+                //execvp("./p1", argv);
             }
             else if (i == 4)
             {
-                execvp("./decisionFunction", argv);
+                sleep(3);
+                execl("decisionFunction", "decisionFunction", (char *) NULL);
+                //execvp("./p2", argv);
             }
             else if (i == 5)
             {
-                execvp("./failureManager", argv);
+                sleep(3);
+                execl("failureManager", "failureManager", (char *) NULL);
+                //execvp("./p3", argv);
             }
         }
+        i++;
+        usleep(200);
     }
+
 
     for (int i = 0; i < 6; i++)
     {
         int z = wait(NULL);
-        printf("\n%d Has crashed stopped",z);
+        printf("\n%d Has crashed stopped", z);
     }
- //   system("rm inputManager & rm p1 & rm p2 & rm p3 & rm pipeP1 & rm decisionFunction & rm socketP2");
-   // system("rm socketDF & rm fileP3 & rm filePid & rm system_log & rm voted_output & rm failureManager");
-   // system("cc InputManager.c -o inputManager & cc P1.c -o p1 & cc P2.c -o p2 & cc P3.c -o p3");
-   // system("cc DecisionFunction.c -o decisionFunction & cc FailureManager.c -o failureManager");
-*/
+
     return 0;
 }

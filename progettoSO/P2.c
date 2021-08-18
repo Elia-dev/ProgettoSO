@@ -2,10 +2,10 @@
 #include <stdlib.h>
 #include <unistd.h> // For write(), sleep(), read()
 #include <signal.h>
-#include <time.h>
 #include <sys/socket.h>
 #include <sys/un.h> // For AF_UNIX sockets
 #include <arpa/inet.h> // For order byte network
+#include <time.h>
 #include "constHeader.h"
 
 int openInputManagerSocket()
@@ -23,7 +23,7 @@ int openInputManagerSocket()
         connection = connect (clientFd, serverSockAddrPtr, serverLen);
         if (connection == -1) // Se la connessione fallisce
         {
-            printf("Retrying connection in 1 sec\n");
+            printf("P2->InputManager: Retrying connection in 1 sec\n");
             sleep (1); // Wait and then try again
         }
     }
@@ -47,7 +47,7 @@ int openDecisionFunctionSocket()
         connection = connect (clientFd, serverSockAddrPtr, serverLen);
         if (connection == -1) // Se la connessione fallisce
         {
-            printf("Retrying connection in 1 sec\n");
+            printf("P2->DecisionFunction: Retrying connection in 1 sec\n");
             sleep (1); // Wait and then try again
         }
     }
@@ -79,7 +79,7 @@ int sum(char *str)
 
 int random_failure(int attivo)
 {
-    srand(time(NULL));
+    srand(time(0));
     // Se random failure è attivo e il numero generato tra 0 e 9 è uguale ad 1 allora genera una failure
     if(attivo && (rand()%10) == 1)
     {
@@ -119,30 +119,32 @@ int generatePid()   //metodo che genera un file contenente il PID di questo proc
 
 int main()
 {
-    generatePid();
     int clientFd;
     int clientDecisionFunction;
     char str[700]; // 700 perchè le righe sono grosse circa 550 e sennò va fuori memoria e crasha
     int charSum = 0;
+    generatePid();
 
     clientFd = openInputManagerSocket();
-    printf("CONNESSIONE APERTA\n");
+    printf("P2: PRONTO\n");
     int count = 0;
     while(readLine(clientFd, str))
     {
-        printf("Stringa ricevuta: %s\n", str);
+        //printf("Stringa ricevuta: %s\n", str);
         charSum = sum(str);
         charSum += random_failure(MODEXEC);
         clientDecisionFunction = openDecisionFunctionSocket();
+        printf("P2->DF: SOCKET APERTO\n");
         //printf("Somma: %d: \n", charSum);
         sendToDecisionFunction(clientDecisionFunction, charSum);
         close(clientDecisionFunction);
+        printf("P2->DF: SOCKET CHIUSO\n");
         sleep(1);
     }
     clientDecisionFunction = openDecisionFunctionSocket();
     sendToDecisionFunction(clientDecisionFunction, -1);
     close(clientDecisionFunction);
     close (clientFd); // Close the socket
-    printf("Socket chiusa\n");
+    printf("P2: TERMINATO\n");
     return 0;
 }

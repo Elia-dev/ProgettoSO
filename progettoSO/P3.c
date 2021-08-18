@@ -2,10 +2,10 @@
 #include <stdlib.h>
 #include <unistd.h> // For write(), sleep(), read()
 #include <signal.h>
-#include <time.h>
 #include <fcntl.h> // For open() constants
 #include <sys/un.h> // For AF_UNIX sockets
 #include <arpa/inet.h> // For order byte network
+#include <time.h>
 #include "constHeader.h"
 
 int clientFd;
@@ -26,7 +26,7 @@ void openSocket()
         connection = connect (clientFd, serverSockAddrPtr, serverLen);
         if (connection == -1) // Se la connessione fallisce
         {
-            printf("Retrying connection in 1 sec\n");
+            printf("P3: Retrying connection in 1 sec\n");
             sleep (1); // Wait and then try again
         }
     }
@@ -74,7 +74,8 @@ int readLine (FILE *fp, char *str)
 
 int random_failure(int attivo)
 {
-    srand(time(NULL));
+    time_t t;
+    srand((unsigned)time(&t));
     // Se random failure è attivo e il numero generato tra 0 e 9 è uguale ad 1 allora genera una failure
     if(attivo && (rand()%10) == 1)
     {
@@ -114,7 +115,6 @@ int generatePid()   //metodo che genera un file contenente il PID di questo proc
 
 int main()
 {
-    generatePid();
     char str[700]; // 700 perchè le righe sono grosse circa 550 e sennò va fuori memoria e crasha
     int charSum = 0;
     int fd;
@@ -122,29 +122,30 @@ int main()
     {
         fd = open(FILEPATH, O_RDONLY);
         if(fd < 0) {
-            printf("Errore durante l'apertura del file...\n");
+            printf("P3: Errore durante l'apertura del file...\n");
             sleep(1);
         }
     }
     while(fd < 0);
 
-
-
+    generatePid();
+    printf("P3: PRONTO\n");
     while(readLine(fd, str) > 0)
     {
-        printf("Stringa letta: %s\n", str);
-
+        //printf("Stringa letta: %s\n", str);
         charSum = sum(str);
         charSum += random_failure(MODEXEC);
         openSocket();
+        printf("P3: SOCKET APERTA\n");
         sendToDecisionFunction(charSum);
         close(clientFd);
+        printf("P3: SOCKET CHIUSA\n");
         sleep(1);
     }
     openSocket();
     sendToDecisionFunction(-1);
     close(clientFd);
     close (fd);
-    printf("File chiuso\n");
+    printf("P3: TERMINATO\n");
     return 0;
 }

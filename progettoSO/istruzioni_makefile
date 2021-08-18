@@ -1,9 +1,0 @@
-1)make install: crea le directory e sposta i file
-2)make all: compila tutto
-
-[OPZIONALE]
-3)make clean: pulisce tutto (ritornare allo step1)
-
-[ESECUZIONE]
-
-4)cd bin; ./main /path/G18

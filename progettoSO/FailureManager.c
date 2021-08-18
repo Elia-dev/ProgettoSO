@@ -18,23 +18,19 @@ int generatePid()   //metodo che genera un file contenente il PID di questo proc
 void killAll()   // quando ricevo il segnale termino tutti i processi*/
 {
     //signal(SIGUSR1, killAll);
-    printf("non sono stato eseguito :(");
     unlink(SOCKET); //Distruggo le socket e la pipe
     unlink(SOCKETDF);
     unlink(PIPE);
     system("killall p1 & killall p2 & killall p3 & killall decisionFunction & killall inputManager & killall failureManager"); // & killall watch
-    printf("non sono stato eseguito :(");
 }
 
 int main()
 {
-    generatePid();
     signal(SIGUSR1, killAll);
-    printf("sus");
+    generatePid();
     while(1) {
         sleep(1);
     }
-    printf("sus");
     //Riceve il segnale
     // Termina tutti i processi
     // FACOLTATIVO: riavvia P1, P2, P3

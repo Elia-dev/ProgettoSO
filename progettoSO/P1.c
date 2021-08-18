@@ -1,13 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include <sys/stat.h> // For pipe
 #include <sys/socket.h>
 #include <fcntl.h> // For open() constants
 #include <unistd.h> // For write(), sleep(), read()...
 #include <sys/un.h> // For AF_UNIX sockets
 #include <arpa/inet.h> // For order byte network
+#include <time.h>
 #include "constHeader.h"
 
 int clientFd;
@@ -27,7 +27,7 @@ void openSocket()
         connection = connect (clientFd, serverSockAddrPtr, serverLen);
         if (connection == -1) // Se la connessione fallisce
         {
-            printf("Retrying connection in 1 sec\n");
+            printf("P1: Retrying connection in 1 sec\n");
             sleep (1); // Wait and then try again
         }
     }
@@ -119,21 +119,21 @@ int generatePid()   //metodo che genera un file contenente il PID di questo proc
 
 int main()
 {
-    generatePid();
     int fd;
     char str[700]; // 700 perchè le righe sono grosse circa 550 e sennò va fuori memoria e crasha
     char *token;
     int charSum = 0;
+    generatePid();
 
     createPipe();
-    printf("PIPE CREATA\n");
+    //printf("PIPE CREATA\n");
     fd = open (PIPE, O_RDONLY); //O_RDONLY
-    printf("PIPE APERTA\n");
-
+    //printf("PIPE APERTA\n");
+    printf("P1: PRONTO\n");
     while(readLine (fd, str) > 0)
     {
         charSum = 0;
-        printf("Letto: %s\n\n\n", str);
+        //printf("Letto: %s\n\n\n", str);
         str[strlen(str) - 1] = '\0'; // Alla fine di ogni riga viene sovrascritto il carattere "end of trans. block" (valore ascii 23) con '\0'
         token = strtok(str, ",");
 
@@ -144,12 +144,12 @@ int main()
             token = strtok(NULL, ",");
         }
         charSum += random_failure(MODEXEC);
-        printf("somma: %d \n", charSum);
+        //printf("somma: %d \n", charSum);
         openSocket();
-        printf("SOCKET APERTO\n");
+        printf("P1: SOCKET APERTO\n");
         sendToDecisionFunction(charSum);
-        printf("Sdio mandato\n");
         close(clientFd);
+        printf("P1: SOCKET CHIUSO\n");
         sleep(1); // Utilizzato per sincronizzare decisionFunction con P1, P2 e P3
     }
     openSocket();
@@ -158,5 +158,6 @@ int main()
     //close(clientFd);
     close (fd); //Close pipe
     unlink(PIPE); //Remove used pipe
+    printf("P1: TERMINATO\n");
     return 0;
 }

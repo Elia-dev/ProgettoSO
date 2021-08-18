@@ -52,7 +52,7 @@ int openPipe()
         fd = open (PIPE, O_WRONLY); //Open named pipe for writing
         if (fd == -1)
         {
-            printf("Error opening pipe\n");
+            printf("IM: Error opening pipe\n");
             sleep (1); // Try again in 1 second
         }
     }
@@ -84,8 +84,7 @@ void sendToSharedFile(char *message)
 int generatePid()   //metodo che genera un file contenente il PID di questo processo
 {
     FILE *fp;
-    fp = fopen(PIDPATH, "a");
-    //system("chmod 777 filePid");
+    fp = fopen(PIDPATH, "w");
     int pid = getpid();
     fprintf(fp, "IM: %d\n", pid);
     fclose(fp);
@@ -93,20 +92,21 @@ int generatePid()   //metodo che genera un file contenente il PID di questo proc
 
 int main()
 {
-    //char *path = "../dataset2.csv";
     generatePid();
+    //char *path = "../dataset2.csv";
     char car;
     FILE *fp;
     int dimRiga = 0;
-    fp = fopen(PATHDATASET, "r"); // Apertura del file in sola lettura
-    printf("file dataset aperto\n");
-    fd = openPipe();
-    printf("pipe aperto\n");
-    serverFd = openSocket();
-    printf("socket p2 aperto\n");
-    openSharedFile();
-    printf("file condiviso aperto\n");
 
+    fp = fopen(PATHDATASET, "r"); // Apertura del file in sola lettura
+    //printf("file dataset aperto\n");
+    fd = openPipe();
+    //printf("pipe aperto\n");
+    serverFd = openSocket();
+    //printf("socket p2 aperto\n");
+    openSharedFile();
+    //printf("file condiviso aperto\n");
+    printf("IM: PRONTO\n");
     // Scarto la prima riga leggendola a vuoto
     while(car != '\n')   // Legge la prima riga
     {
@@ -129,7 +129,7 @@ int main()
 
     while(fgets(buffer, dimRiga, fp))  // Scorro tutto il file
     {
-        printf("STRINGA LETTA DA FILE: %s\n\n", buffer);
+        //printf("STRINGA LETTA DA FILE: %s\n\n", buffer);
         sendToPipe(buffer);
         sendToSocket(buffer);
         sendToSharedFile(buffer);
@@ -139,11 +139,12 @@ int main()
     fclose(fp); // Chiude il file dataset.csv
     close(fd); // Chiude il file descriptor della pipe
     close(clientFd); //Close the client
-    printf("Client chiuso\n");
+    //printf("Client chiuso\n");
     close(serverFd); //Close the socket
-    printf("Server chiuso\n");
+    //printf("Server chiuso\n");
     close(fd3);
     unlink(SOCKET);
+    printf("IM: TERMINATO\n");
+    // KILL SIGNAL TO FAILURE MANAGER
     return 0;
 }
-
