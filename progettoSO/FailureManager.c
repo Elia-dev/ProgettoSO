@@ -1,13 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 #include <signal.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <sys/un.h> // For AF_UNIX sockets
-#include <arpa/inet.h>
 #include "ConstHeader.h"
 
 // Genera il pid del processo e lo scrive in un file contenente tutti i processi
@@ -28,13 +23,15 @@ int generatePid()
 }
 
 void endProgram() {
-    system("killall watchdog & killall failureManager");
+    printf("SIGUSR2 received, killing remaining processes [watchDog, failureManager]\n");
+    system("killall watchdog & killall failureManager"); // Uccide gli ultimi processi rimasti in vita
 }
 
-void killAll()   // quando ricevo il segnale termino tutti i processi*/
+void killAll() // Quando riceve il segnale termina tutti i processi
 {
-    //signal(SIGUSR1, killAll);
-    unlink(SOCKET); //Distruggo le socket e la pipe
+    printf("SIGUSR1 received, killing all processes\n");
+    // Distruggo le socket e la pipe
+    unlink(SOCKET);
     unlink(SOCKETDF);
     unlink(PIPE);
 
@@ -43,15 +40,17 @@ void killAll()   // quando ricevo il segnale termino tutti i processi*/
 
 int main()
 {
+    // Alla ricezione di SIGUSR1 vengono terminati tutti i processi
+    // Se viene ricevuto un SIGUSR2 vuol dire che il programma è terminato correttamente
+    // endProgram() termina gli ultimi processi rimasti in vita
+
+    generatePid();
     signal(SIGUSR1, killAll);
     signal(SIGUSR2, endProgram);
-    printf("FM: PRONTO");
-    generatePid();
+    printf("FM: READY\n");
     while(1) {
-        sleep(1);
+
     }
-    //Riceve il segnale
-    // Termina tutti i processi
-    // FACOLTATIVO: riavvia P1, P2, P3
+
     return 0;
 }
