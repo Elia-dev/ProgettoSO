@@ -84,10 +84,11 @@ void sendToSharedFile(char *message)
 int generatePid()   //metodo che genera un file contenente il PID di questo processo
 {
     FILE *fp;
-    fp = fopen(PIDPATH, "w");
+    fp = fopen(PIDPATH, "a");
     int pid = getpid();
     fprintf(fp, "IM: %d\n", pid);
     fclose(fp);
+    return pid;
 }
 
 int main()

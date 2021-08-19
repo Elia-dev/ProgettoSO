@@ -52,6 +52,9 @@
 		<Unit filename="P3.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="Watchdog.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="constHeader.h" />
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />

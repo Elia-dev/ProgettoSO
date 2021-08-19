@@ -17,6 +17,7 @@ int generatePid()   //metodo che genera un file contenente il PID di questo proc
     int pid = getpid();
     fprintf(fp, "FM: %d\n", pid);
     fclose(fp);
+    return pid;
 }
 
 void killAll()   // quando ricevo il segnale termino tutti i processi*/

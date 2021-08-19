@@ -3,7 +3,7 @@
 
 #define MODEXEC 1
 #define PATHDATASET "../dataset2.csv"
-#define FILEPATH "./fileP3"
+#define FILEPATH "fileP3"
 #define PIDPATH "filePid"
 #define OUTPUT "voted_output"
 #define SYSLOG "system_log"

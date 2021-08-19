@@ -43,27 +43,38 @@ int readProcess(int *process)
 }
 */
 
-void generatePid()   //metodo che genera un file contenente il PID di questo processo
+int generatePid()   //metodo che genera un file contenente il PID di questo processo
 {
     FILE *fp = fopen(PIDPATH, "a");
     int pid = getpid();
     fprintf(fp, "DF: %d\n", pid);
     fclose(fp);
+    return pid;
 }
 
-int findPid(char *name) {
-    char *result;
+int findPid(char *name)
+{
+    char result[16];
     int pid;
     FILE *fp = fopen(PIDPATH, "r");
+    if(fp != NULL)
+    {
+        printf("ho aperto il file\n");
+    }
 
-    do {
+    do
+    {
         fgets(result, 15, fp);
-    }while(result[0] != name[0] || result[1] != name[1]); // Legge i vari pid finché non trova quello richiesto
+        printf("%s\n", result);
+        //sleep(1);
+    }
+    while(result[0] != name[0] || result[1] != name[1]);  // Legge i vari pid finché non trova quello richiesto
 
     char *substring;
     strtok(result, " ");
     substring = strtok(NULL, " ");
     pid = atoi(substring);
+    fclose(fp);
     //printf("PID trovato: %d\n", pid);
     return pid;
 }
@@ -74,12 +85,13 @@ int main()
     int sommaP1, sommaP2, sommaP3;
     int tmp;
     int pidFailManager;
+    int pidWatchDog;
     FILE *fpOutput, *fpSysLog;
     generatePid();
     createSocket();
     //printf("socket creato\n");
-    fpOutput = fopen(OUTPUT, "w"); // Apertura del file
     fpSysLog = fopen(SYSLOG, "w");
+    fpOutput = fopen(OUTPUT, "a"); // Apertura del file
     printf("DF:  PRONTO\n");
     do
     {
@@ -123,22 +135,33 @@ int main()
         //printf("\n\n\n\n\n");
         if(sommaP1 > 0 && sommaP2 > 0 && sommaP3 > 0)
         {
+            printf("HO RICEVUTO LA SOMMA\n");
             fprintf(fpOutput, "%d %d %d\n", sommaP1, sommaP2, sommaP3); // Scrivo su file i risultati dei processi
             //manda un segnale I_AM_ALIVE al watchdog
+
             if(sommaP1 == sommaP2 || sommaP1 == sommaP3 || sommaP2 == sommaP3)   // Eseguo il voto di maggioranza
             {
+
                 fprintf(fpSysLog, "SUCCESSO\n");
+                printf("HO SCRITTO SUCCESSO\n");
+                pidWatchDog = findPid("WD");
+                printf("PID PER IL WATCHDOG IN SUCCESSO: %d", pidWatchDog);
+                kill(pidWatchDog, SIGUSR2); // Manda I_AM_ALIVE
             }
             else
             {
                 fprintf(fpSysLog, "FALLIMENTO\n");
-                pidFailManager = findPid("FM");
-                fclose(fpSysLog);
+                printf("HO SCRITTO FALLIMENTO\n");
+                pidWatchDog = findPid("WD");
+                printf("PID PER IL WATCHDOG IN FALLIMENTO: %d", pidWatchDog);
                 fclose(fpOutput);
+                fclose(fpSysLog);
+                kill(pidWatchDog, SIGUSR2);
+                pidFailManager = findPid("FM");
+
                 kill(pidFailManager, SIGUSR1); //manda un segnale SIGUSR1 a failureManager
             }
         }
-
 
     }
     while(sommaP1 > 0 || sommaP2 > 0 || sommaP3 > 0);

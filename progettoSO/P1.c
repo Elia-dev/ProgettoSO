@@ -115,6 +115,7 @@ int generatePid()   //metodo che genera un file contenente il PID di questo proc
     int pid = getpid();
     fprintf(fp, "P1: %d\n", pid);
     fclose(fp);
+    return pid;
 }
 
 int main()

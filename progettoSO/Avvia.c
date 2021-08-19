@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
 {
     int zero = 0;
     int uno = 1;
-    FILE *fp = fopen("constHeader.h", "w"); // da dare percorso giusto
+    FILE *fp = fopen("constHeader.h", "w");
 
     //mkdir("LOG", 0777);  /*creo una cartella per i vari file di log*/
     //mkdir("BIN", 0777); /*creo una cartella per i file compilati*/
@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
         }
 
         fprintf(fp, "#define PATHDATASET \"%s\"\n", argv[2]);
-        fprintf(fp, "#define FILEPATH \"./fileP3\"\n#define PIDPATH \"filePid\"\n");
+        fprintf(fp, "#define FILEPATH \"fileP3\"\n#define PIDPATH \"filePid\"\n");
         fprintf(fp, "#define OUTPUT \"voted_output\"\n#define SYSLOG \"system_log\"\n");
         fprintf(fp, "#define DEFAULT_PROTOCOL %d\n#define SOCKET \"socketP2\"\n", zero);
         fprintf(fp, "#define SOCKETDF \"socketDF\"\n#define PIPE \"pipeP1\"\n\n");
@@ -65,48 +65,56 @@ int main(int argc, char *argv[])
         // close(fdrisultato);
         exit(-1);
     }
-
+/*
     system("rm inputManager & rm p1 & rm p2 & rm p3 & rm pipeP1 & rm decisionFunction & rm socketP2");
-    system("rm socketDF & rm fileP3 & rm filePid & rm system_log & rm voted_output & rm failureManager");
+    system("rm socketDF & rm fileP3 & rm filePid & rm system_log & rm voted_output & rm failureManager & rm watchdog");
     system("cc InputManager.c -o inputManager & cc P1.c -o p1 & cc P2.c -o p2 & cc P3.c -o p3");
-    system("cc DecisionFunction.c -o decisionFunction & cc FailureManager.c -o failureManager");
+    system("cc DecisionFunction.c -o decisionFunction & cc FailureManager.c -o failureManager& cc Watchdog.c -o watchdog");
+
     /*
     provare serie di fork ed exec
     */
+    /*
+    if (fork() == 0)
+    {
+        printf("--watchDog Avviato\n");
+        execl("watchDog", "watchDog", (char *) NULL);
+    }
+    usleep(800000);
+    if (fork() == 0)
+    {
+        printf("--failureManager Avviato\n");
+        execl("failureManager", "failureManager", (char *) NULL);
+    }
+    usleep(500000);
     if (fork() == 0)
     {
         printf("--inputManager Avviato\n");
         execl("inputManager", "inputManager", (char *) NULL);
     }
-    usleep(500000);
+    usleep(400000);
     if (fork() == 0)
     {
         printf("--p1 Avviato\n");
         execl("p1", "p1", (char *) NULL);
     }
-    usleep(400000);
+    usleep(300000);
     if (fork() == 0)
     {
         printf("--p2 Avviato\n");
         execl("p2", "p2", (char *) NULL);
     }
-    usleep(300000);
+    usleep(200000);
     if (fork() == 0)
     {
         printf("--p3 Avviato\n");
         execl("p3", "p3", (char *) NULL);
     }
-    usleep(200000);
+    usleep(100000);
     if (fork() == 0)
     {
         printf("--decisionFunction Avviato\n");
         execl("decisionFunction", "decisionFunction", (char *) NULL);
-    }
-    usleep(100000);
-    if (fork() == 0)
-    {
-        printf("--failureManager Avviato\n");
-        execl("failureManager", "failureManager", (char *) NULL);
     }
     /*
             int i = 0;
@@ -156,12 +164,12 @@ int main(int argc, char *argv[])
                 usleep(200);
             }
         */
-
-    for (int i = 0; i < 6; i++)
+/*
+    for (int i = 0; i < 7; i++)
     {
         int z = wait(NULL);
         printf("\n%d Has crashed stopped", z);
     }
-    printf("\n");
+    printf("\n");*/
     return 0;
 }
