@@ -6,7 +6,7 @@
 #include <sys/un.h> // For AF_UNIX sockets
 #include <arpa/inet.h> // For order byte network
 #include <time.h>
-#include "constHeader.h"
+#include "ConstHeader.h"
 
 int openInputManagerSocket()
 {
@@ -109,9 +109,17 @@ void sendToDecisionFunction(int clientDecisionFunction, int sum)
     //write (clientFd, str2, strlen(str2) + 1); /* Write first line */
 }
 
-int generatePid()   //metodo che genera un file contenente il PID di questo processo
+// Genera il pid del processo e lo scrive in un file contenente tutti i processi
+int generatePid()
 {
-    FILE *fp = fopen(PIDPATH, "a");
+    FILE *fp;
+    do {
+        fp = fopen(PIDPATH, "a");
+        if(fp == NULL) {
+            printf("P2: error opening file pid\n"); // Davanti al numero del pid vengono salvati due caratteri per identificare il processo
+        }
+    }while(fp == NULL);
+
     int pid = getpid();
     fprintf(fp, "P2: %d\n", pid);
     fclose(fp);

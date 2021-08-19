@@ -10,7 +10,9 @@ int main(int argc, char *argv[])
 {
     int zero = 0;
     int uno = 1;
-    FILE *fp = fopen("constHeader.h", "w");
+    FILE *fp = fopen("ConstHeader.h", "w");
+    FILE *fpPid  = fopen("filePid", "w");
+    fclose(fpPid); // Creazione del file Pid
 
     //mkdir("LOG", 0777);  /*creo una cartella per i vari file di log*/
     //mkdir("BIN", 0777); /*creo una cartella per i file compilati*/
@@ -65,12 +67,10 @@ int main(int argc, char *argv[])
         // close(fdrisultato);
         exit(-1);
     }
-/*
     system("rm inputManager & rm p1 & rm p2 & rm p3 & rm pipeP1 & rm decisionFunction & rm socketP2");
     system("rm socketDF & rm fileP3 & rm filePid & rm system_log & rm voted_output & rm failureManager & rm watchdog");
     system("cc InputManager.c -o inputManager & cc P1.c -o p1 & cc P2.c -o p2 & cc P3.c -o p3");
     system("cc DecisionFunction.c -o decisionFunction & cc FailureManager.c -o failureManager& cc Watchdog.c -o watchdog");
-
     /*
     provare serie di fork ed exec
     */

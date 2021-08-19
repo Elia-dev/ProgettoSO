@@ -8,7 +8,7 @@
 #include <fcntl.h>
 #include <sys/un.h> // For AF_UNIX sockets
 #include <arpa/inet.h>
-#include "constHeader.h"
+#include "ConstHeader.h"
 
 int serverFd;
 int clientFd;
@@ -43,9 +43,17 @@ int readProcess(int *process)
 }
 */
 
-int generatePid()   //metodo che genera un file contenente il PID di questo processo
+// Genera il pid del processo e lo scrive in un file contenente tutti i processi
+int generatePid()
 {
-    FILE *fp = fopen(PIDPATH, "a");
+    FILE *fp;
+    do {
+        fp = fopen(PIDPATH, "a");
+        if(fp == NULL) {
+            printf("DF: error opening file pid\n"); // Davanti al numero del pid vengono salvati due caratteri per identificare il processo
+        }
+    }while(fp == NULL);
+
     int pid = getpid();
     fprintf(fp, "DF: %d\n", pid);
     fclose(fp);
@@ -90,9 +98,24 @@ int main()
     generatePid();
     createSocket();
     //printf("socket creato\n");
-    fpSysLog = fopen(SYSLOG, "w");
-    fpOutput = fopen(OUTPUT, "a"); // Apertura del file
+    do {
+        fpSysLog = fopen(SYSLOG, "w");
+        if(fpSysLog == NULL) {
+            printf("DF: error opening system_log\n");
+            sleep(1);
+        }
+    }while(fpSysLog == NULL);
+
+    do {
+        fpOutput = fopen(OUTPUT, "w");
+        if(fpOutput == NULL) {
+            printf("DF: error opening voted_output\n");
+            sleep(1);
+        }
+    }while(fpOutput == NULL);
+
     printf("DF:  PRONTO\n");
+
     do
     {
 
@@ -169,6 +192,9 @@ int main()
     fclose(fpSysLog);
     fclose(fpOutput);
     unlink(SOCKETDF);
+
+    pidFailManager = findPid("FM");
+    kill(pidFailManager, SIGUSR2);
 
     return 0;
 }

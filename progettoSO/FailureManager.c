@@ -8,16 +8,27 @@
 #include <fcntl.h>
 #include <sys/un.h> // For AF_UNIX sockets
 #include <arpa/inet.h>
-#include "constHeader.h"
+#include "ConstHeader.h"
 
-
-int generatePid()   //metodo che genera un file contenente il PID di questo processo
+// Genera il pid del processo e lo scrive in un file contenente tutti i processi
+int generatePid()
 {
-    FILE *fp = fopen(PIDPATH, "a");
+    FILE *fp;
+    do {
+        fp = fopen(PIDPATH, "a");
+        if(fp == NULL) {
+            printf("FM: error opening file pid\n"); // Davanti al numero del pid vengono salvati due caratteri per identificare il processo
+        }
+    }while(fp == NULL);
+
     int pid = getpid();
     fprintf(fp, "FM: %d\n", pid);
     fclose(fp);
     return pid;
+}
+
+void endProgram() {
+    system("killall watchdog & killall failureManager");
 }
 
 void killAll()   // quando ricevo il segnale termino tutti i processi*/
@@ -26,12 +37,14 @@ void killAll()   // quando ricevo il segnale termino tutti i processi*/
     unlink(SOCKET); //Distruggo le socket e la pipe
     unlink(SOCKETDF);
     unlink(PIPE);
-    system("killall p1 & killall p2 & killall p3 & killall decisionFunction & killall inputManager & killall failureManager"); // & killall watch
+
+    system("killall p1 & killall p2 & killall p3 & killall decisionFunction & killall inputManager & killall watchdog & killall failureManager");
 }
 
 int main()
 {
     signal(SIGUSR1, killAll);
+    signal(SIGUSR2, endProgram);
     printf("FM: PRONTO");
     generatePid();
     while(1) {

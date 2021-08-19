@@ -8,15 +8,21 @@
 #include <fcntl.h>
 #include <sys/un.h> // For AF_UNIX sockets
 #include <arpa/inet.h>
-#include "constHeader.h"
+#include "ConstHeader.h"
 
-int c = 0;
-
-int generatePid()   //metodo che genera un file contenente il PID di questo processo
+// Genera il pid del processo e lo scrive in un file contenente tutti i processi
+int generatePid()
 {
-    FILE *fp = fopen(PIDPATH, "w");
+    FILE *fp;
+    do {
+        fp = fopen(PIDPATH, "a");
+        if(fp == NULL) {
+            printf("WD: error opening file pid\n");
+        }
+    }while(fp == NULL);
+
     int pid = getpid();
-    fprintf(fp, "WD: %d\n", pid);
+    fprintf(fp, "WD: %d\n", pid); // Davanti al numero del pid vengono salvati due caratteri per identificare il processo
     fclose(fp);
     return pid;
 }

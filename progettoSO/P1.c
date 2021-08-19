@@ -8,7 +8,7 @@
 #include <sys/un.h> // For AF_UNIX sockets
 #include <arpa/inet.h> // For order byte network
 #include <time.h>
-#include "constHeader.h"
+#include "ConstHeader.h"
 
 int clientFd;
 
@@ -27,7 +27,7 @@ void openSocket()
         connection = connect (clientFd, serverSockAddrPtr, serverLen);
         if (connection == -1) // Se la connessione fallisce
         {
-            printf("P1: Retrying connection in 1 sec\n");
+            printf("P1: Retrying socket connection in 1 sec\n");
             sleep (1); // Wait and then try again
         }
     }
@@ -109,9 +109,17 @@ void sendToDecisionFunction(int sum)
     //write (clientFd, str2, strlen(str2) + 1); /* Write first line */
 }
 
-int generatePid()   //metodo che genera un file contenente il PID di questo processo
+// Genera il pid del processo e lo scrive in un file contenente tutti i processi
+int generatePid()
 {
-    FILE *fp = fopen(PIDPATH, "a");
+    FILE *fp;
+    do {
+        fp = fopen(PIDPATH, "a");
+        if(fp == NULL) {
+            printf("P1: error opening file pid\n"); // Davanti al numero del pid vengono salvati due caratteri per identificare il processo
+        }
+    }while(fp == NULL);
+
     int pid = getpid();
     fprintf(fp, "P1: %d\n", pid);
     fclose(fp);
@@ -128,7 +136,13 @@ int main()
 
     createPipe();
     //printf("PIPE CREATA\n");
-    fd = open (PIPE, O_RDONLY); //O_RDONLY
+    do {
+        fd = open (PIPE, O_RDONLY); //O_RDONLY
+        if(fd == -1) {
+            printf("P1: error opening pipe\n");
+        }
+    }while(fd == -1);
+
     //printf("PIPE APERTA\n");
     printf("P1: PRONTO\n");
     while(readLine (fd, str) > 0)
@@ -156,7 +170,6 @@ int main()
     openSocket();
     sendToDecisionFunction(-1);
     close(clientFd);
-    //close(clientFd);
     close (fd); //Close pipe
     unlink(PIPE); //Remove used pipe
     printf("P1: TERMINATO\n");

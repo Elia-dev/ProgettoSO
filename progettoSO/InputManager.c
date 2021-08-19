@@ -6,7 +6,7 @@
 #include <sys/socket.h>
 #include <sys/un.h> // For AF_UNIX sockets
 #include <signal.h>
-#include "constHeader.h"
+#include "ConstHeader.h"
 
 
 int fd;
@@ -68,7 +68,15 @@ void sendToPipe(char *message)
 
 void openSharedFile()
 {
-    fd3 = open(FILEPATH, O_CREAT|O_WRONLY|O_TRUNC, 0777);
+    do{
+        fd3 = open(FILEPATH, O_CREAT|O_WRONLY|O_TRUNC, 0777);
+        if (fd3 == -1)
+        {
+            printf("IM: Error opening shared file\n");
+            sleep (1); // Try again in 1 second
+        }
+    }while(fd3 == -1);
+
 }
 
 void sendToSharedFile(char *message)
@@ -81,10 +89,18 @@ void sendToSharedFile(char *message)
     write(fd3, message, strlen(message) + 1);
 }
 
-int generatePid()   //metodo che genera un file contenente il PID di questo processo
+// Genera il pid del processo e lo scrive in un file contenente tutti i processi
+int generatePid()
 {
     FILE *fp;
-    fp = fopen(PIDPATH, "a");
+    do {
+        fp = fopen(PIDPATH, "a");
+        if(fp == NULL) {
+            printf("IM: error opening pid file\n"); // Davanti al numero del pid vengono salvati due caratteri per identificare il processo
+            sleep(1);
+        }
+    }while(fp == NULL);
+
     int pid = getpid();
     fprintf(fp, "IM: %d\n", pid);
     fclose(fp);
@@ -99,7 +115,14 @@ int main()
     FILE *fp;
     int dimRiga = 0;
 
-    fp = fopen(PATHDATASET, "r"); // Apertura del file in sola lettura
+    do {
+        fp = fopen(PATHDATASET, "r"); // Apertura del file in sola lettura
+        if(fp == NULL) {
+            printf("IM: error opening dataset file\n");
+            sleep(1);
+        }
+    }while(fp == NULL);
+
     //printf("file dataset aperto\n");
     fd = openPipe();
     //printf("pipe aperto\n");
@@ -143,9 +166,8 @@ int main()
     //printf("Client chiuso\n");
     close(serverFd); //Close the socket
     //printf("Server chiuso\n");
-    close(fd3);
+    close(fd3); // Chiude il file condiviso
     unlink(SOCKET);
     printf("IM: TERMINATO\n");
-    // KILL SIGNAL TO FAILURE MANAGER
     return 0;
 }
