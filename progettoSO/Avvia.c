@@ -1,9 +1,9 @@
-#include<stdio.h>
-#include<stdlib.h>
-#include<unistd.h>
-#include<fcntl.h>
-#include<string.h>
-#include<sys/stat.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <string.h>
+#include <sys/stat.h>
 #include <wait.h>
 
 int main(int argc, char *argv[])
@@ -11,7 +11,6 @@ int main(int argc, char *argv[])
     /*
         All'interno del file avvia viene creato il file header utilizzato da tutti i processi
     */
-    umask(0000);
     int zero = 0;
     int uno = 1;
     FILE *fp = fopen("./SRC/ConstHeader.h", "w"); // Creazione file header
@@ -56,8 +55,7 @@ int main(int argc, char *argv[])
         printf("Invalid number of arguments\n");
         exit(-1);
     }
-    // system("rm pipeP1 & rm socketP2");
-    // system("rm socketDF & rm fileP3 & rm filePid & rm system_log & rm voted_output");
+    
     system("make clean");
     system("make");
     usleep(50000);
@@ -67,7 +65,7 @@ int main(int argc, char *argv[])
 	if (fork() == 0)
     {
         printf("--watchDog Avviato\n");
-        execl("./BIN/watchDog", "./BIN/watchDog", (char *) NULL);
+        execl("./BIN/watchdog", "./BIN/watchdog", (char *) NULL);
     }
     usleep(80000);
     if (fork() == 0)
@@ -107,59 +105,6 @@ int main(int argc, char *argv[])
         printf("--decisionFunction Avviato\n");
         execl("./BIN/decisionFunction", "./BIN/decisionFunction", (char *) NULL);
     }
-    
-    
-    
-    
-    /*
-            int i = 0;
-            while(i < 6)
-            {
-                printf("VALORE DELLA I: %d\n", i);
-                if (fork() == 0)
-                {
-                    if (i == 0)
-                    {
-                        sleep(3);
-                        execl("inputManager", "inputManager", (char *) NULL);
-                        //execvp("./inputManager", argv);
-                    }
-                    else if (i == 1)
-                    {
-                        sleep(3);
-                        execl("p1", "p1", (char *) NULL);
-                        //execvp("./decisionFunction", argv);
-                    }
-                    else if (i == 2)
-                    {
-                        sleep(3);
-                        execl("p2", "p2", (char *) NULL);
-                        //execvp("./failureManager", argv);
-                    }
-                    else if(i == 3)
-                    {
-                        sleep(3);
-                        execl("p3", "p3", (char *) NULL);
-                        //execvp("./p1", argv);
-                    }
-                    else if (i == 4)
-                    {
-                        sleep(3);
-                        execl("decisionFunction", "decisionFunction", (char *) NULL);
-                        //execvp("./p2", argv);
-                    }
-                    else if (i == 5)
-                    {
-                        sleep(3);
-                        execl("failureManager", "failureManager", (char *) NULL);
-                        //execvp("./p3", argv);
-                    }
-                }
-                i++;
-                usleep(200);
-            }
-        */
-
 
     for (int i = 0; i < 7; i++)
     {
