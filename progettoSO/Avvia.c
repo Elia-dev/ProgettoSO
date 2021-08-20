@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
     for (int i = 0; i < 7; i++)
     {
         int z = wait(NULL);
-        printf("\n%d: STOPPED", z);
+        printf("%d: STOPPED\n", z);
     }
 
     return 0;
