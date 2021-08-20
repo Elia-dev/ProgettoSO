@@ -55,6 +55,7 @@ void openFile() { //FILE *fpOutput, FILE *fpSysLog
         }
     }
     while(fpSysLog == NULL);
+    
     do
     {
         fpOutput = fopen(OUTPUT, "a");
@@ -69,16 +70,18 @@ void openFile() { //FILE *fpOutput, FILE *fpSysLog
 
 int main()
 {
+	savePidOnFile("DF", getpid());
     int sumP1, sumP2, sumP3;
     int tmp;
     int pidFailManager;
     int pidWatchDog;
     
-
-    savePidOnFile("DF", getpid());
-    createSocket();
-
+    fpSysLog = fopen("./LOG/system_log", "w");
+    fpOutput = fopen("./LOG/voted_output", "w");
+	fclose(fpSysLog);
+    fclose(fpOutput);
     
+    createSocket();
 
     pidWatchDog = findPid("WD"); // Cerco il pid del watchDog per inviargli successivamente il segnale I_AM_ALIVE
     pidFailManager = findPid("FM"); // E quello del failureManager per inviargli SIGUSR1
@@ -95,7 +98,6 @@ int main()
         {
         	openFile();
             fprintf(fpOutput, "%d %d %d\n", sumP1, sumP2, sumP3); // Scrivo su file i risultati dei processi
-            usleep(5000);
             fclose(fpOutput);
             kill(pidWatchDog, SIGUSR2); // Manda I_AM_ALIVE al watchdog
 

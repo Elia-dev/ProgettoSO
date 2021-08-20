@@ -23,12 +23,7 @@ int main(int argc, char *argv[])
     int uno = 1;
     FILE *fp = fopen("./SRC/ConstHeader.h", "w"); // Creazione file header
     FILE *fpPid  = fopen("filePid", "w"); // Creazione del file Pid
-    FILE *fpSysLog = fopen("./LOG/system_log", "w");
-    FILE *fpOutput = fopen("./LOG/voted_output", "w");
     fclose(fpPid);
-    fclose(fpSysLog);
-    fclose(fpOutput);
-    
 	usleep(100);
     if(argc == 3)  // Se sono stati passati meno di due argomenti termino
     {
