@@ -12,6 +12,7 @@ int clientLen;
 int serverFd;
 int clientFd;
 struct sockaddr* clientSockAddrPtr;
+FILE *fpOutput, *fpSysLog;
 
 void createSocket() // Creazione della socket per ricevere i dati dall'InputManager
 {
@@ -43,21 +44,10 @@ int readProcess() // Legge la somma mandata dal client
     return sum;
 }
 
-
-int main()
-{
-    int sumP1, sumP2, sumP3;
-    int tmp;
-    int pidFailManager;
-    int pidWatchDog;
-    FILE *fpOutput, *fpSysLog;
-
-    savePidOnFile("DF", getpid());
-    createSocket();
-
-    do
+void openFile() { //FILE *fpOutput, FILE *fpSysLog
+	do
     {
-        fpSysLog = fopen(SYSLOG, "w");
+        fpSysLog = fopen(SYSLOG, "a");
         if(fpSysLog == NULL)
         {
             printf("DF: error opening system_log\n");
@@ -65,10 +55,9 @@ int main()
         }
     }
     while(fpSysLog == NULL);
-
     do
     {
-        fpOutput = fopen(OUTPUT, "w");
+        fpOutput = fopen(OUTPUT, "a");
         if(fpOutput == NULL)
         {
             printf("DF: error opening voted_output\n");
@@ -76,6 +65,20 @@ int main()
         }
     }
     while(fpOutput == NULL);
+}
+
+int main()
+{
+    int sumP1, sumP2, sumP3;
+    int tmp;
+    int pidFailManager;
+    int pidWatchDog;
+    
+
+    savePidOnFile("DF", getpid());
+    createSocket();
+
+    
 
     pidWatchDog = findPid("WD"); // Cerco il pid del watchDog per inviargli successivamente il segnale I_AM_ALIVE
     pidFailManager = findPid("FM"); // E quello del failureManager per inviargli SIGUSR1
@@ -90,21 +93,23 @@ int main()
 
         if(sumP1 > 0 && sumP2 > 0 && sumP3 > 0) // Se viene ricevuta una somma negativa (quindi i processi hanno finito di leggere) salto la parte di scrittura su file
         {
+        	openFile();
             fprintf(fpOutput, "%d %d %d\n", sumP1, sumP2, sumP3); // Scrivo su file i risultati dei processi
+            usleep(5000);
+            fclose(fpOutput);
             kill(pidWatchDog, SIGUSR2); // Manda I_AM_ALIVE al watchdog
 
             if(sumP1 == sumP2 || sumP1 == sumP3 || sumP2 == sumP3)   // Eseguo il voto di maggioranza
             {
                 fprintf(fpSysLog, "SUCCESSO\n");
+                fclose(fpSysLog);
                 printf("DF: SUCCESS\n");
             }
             else
             {
                 fprintf(fpSysLog, "FALLIMENTO\n");
-                printf("DF: FAILURE\n");
-                // Vengono terminati i file in vista della terminazione del programma
-                fclose(fpOutput);
                 fclose(fpSysLog);
+                printf("DF: FAILURE\n");
                 kill(pidFailManager, SIGUSR1); // Manda un segnale SIGUSR1 a failureManager
             }
         }
@@ -113,8 +118,6 @@ int main()
     while(sumP1 > 0 || sumP2 > 0 || sumP3 > 0);
 
     close(serverFd);
-    fclose(fpSysLog);
-    fclose(fpOutput);
     unlink(SOCKETDF);
     kill(pidFailManager, SIGUSR2); // Viene notificato il failManager che il programma ha terminato l'esecuzione e che anche lui può terminare
 
