@@ -8,15 +8,16 @@
 
 int main(int argc, char *argv[])
 {
-/*
-    All'interno del file avvia viene creato il file header utilizzato da tutti i processi
-*/
+    /*
+        All'interno del file avvia viene creato il file header utilizzato da tutti i processi
+    */
+    umask(0000);
     int zero = 0;
     int uno = 1;
     FILE *fp = fopen("./SRC/ConstHeader.h", "w"); // Creazione file header
     FILE *fpPid  = fopen("filePid", "w"); // Creazione del file Pid
     fclose(fpPid);
-
+	usleep(100);
     if(argc == 3)  // Se sono stati passati meno di due argomenti termino
     {
         fprintf(fp, "#ifndef CONSTHEADER_H_INCLUDED\n#define CONSTHEADER_H_INCLUDED\n\n");
@@ -38,11 +39,11 @@ int main(int argc, char *argv[])
             exit(-1);
         }
 
-        fprintf(fp, "#define PATHDATASET \"%s\"\n", argv[2]); // cambiare percorso file da mettere in LOG
-        fprintf(fp, "#define FILEPATH \"./../LOG/fileP3\"\n#define PIDPATH \"./../LOG/filePid\"\n");
-        fprintf(fp, "#define OUTPUT \"./../LOG/voted_output\"\n#define SYSLOG \"./../LOG/system_log\"\n");
-        fprintf(fp, "#define DEFAULT_PROTOCOL %d\n#define SOCKET \"./../LOG/socketP2\"\n", zero);
-        fprintf(fp, "#define SOCKETDF \"./../LOG/socketDF\"\n#define PIPE \"./../LOG/pipeP1\"\n\n");
+        fprintf(fp, "#define PATHDATASET \"%s\"\n", argv[2]);
+        fprintf(fp, "#define FILEPATH \"./LOG/fileP3\"\n#define PIDPATH \"./LOG/filePid\"\n");
+        fprintf(fp, "#define OUTPUT \"./LOG/voted_output\"\n#define SYSLOG \"./LOG/system_log\"\n");
+        fprintf(fp, "#define DEFAULT_PROTOCOL %d\n#define SOCKET \"./LOG/socketP2\"\n", zero);
+        fprintf(fp, "#define SOCKETDF \"./LOG/socketDF\"\n#define PIPE \"./LOG/pipeP1\"\n\n");
         fprintf(fp, "int savePidOnFile(char *name, int pid);\n");
         fprintf(fp, "int findPid(char *name);\n\n");
         fprintf(fp, "#endif // CONSTHEADER_H_INCLUDED\n");
@@ -55,57 +56,61 @@ int main(int argc, char *argv[])
         printf("Invalid number of arguments\n");
         exit(-1);
     }
-   // system("rm pipeP1 & rm socketP2");
-   // system("rm socketDF & rm fileP3 & rm filePid & rm system_log & rm voted_output");
+    // system("rm pipeP1 & rm socketP2");
+    // system("rm socketDF & rm fileP3 & rm filePid & rm system_log & rm voted_output");
     system("make clean");
     system("make");
+    usleep(50000);
     system("make install");
+	usleep(50000);
 
-    /*
-    provare serie di fork ed exec
-    */
-    /*
-    if (fork() == 0)
+	if (fork() == 0)
     {
         printf("--watchDog Avviato\n");
-        execl("watchDog", "watchDog", (char *) NULL);
+        execl("./BIN/watchDog", "./BIN/watchDog", (char *) NULL);
     }
-    usleep(800000);
+    usleep(80000);
     if (fork() == 0)
     {
         printf("--failureManager Avviato\n");
-        execl("failureManager", "failureManager", (char *) NULL);
+        execl("./BIN/failureManager", "./BIN/failureManager", (char *) NULL);
+
     }
-    usleep(500000);
+    usleep(70000);
     if (fork() == 0)
     {
         printf("--inputManager Avviato\n");
-        execl("inputManager", "inputManager", (char *) NULL);
+        execl("./BIN/inputManager", "./BIN/inputManager", (char *) NULL);
     }
-    usleep(400000);
+    usleep(60000);
     if (fork() == 0)
     {
         printf("--p1 Avviato\n");
-        execl("p1", "p1", (char *) NULL);
+        execl("./BIN/p1", "./BIN/p1", (char *) NULL);
     }
-    usleep(300000);
+    usleep(50000);
     if (fork() == 0)
     {
         printf("--p2 Avviato\n");
-        execl("p2", "p2", (char *) NULL);
+        execl("./BIN/p2", "./BIN/p2", (char *) NULL);
+
     }
-    usleep(200000);
+    usleep(40000);
     if (fork() == 0)
     {
         printf("--p3 Avviato\n");
-        execl("p3", "p3", (char *) NULL);
+        execl("./BIN/p3", "./BIN/p3", (char *) NULL);
     }
-    usleep(100000);
+    usleep(30000);
     if (fork() == 0)
     {
         printf("--decisionFunction Avviato\n");
-        execl("decisionFunction", "decisionFunction", (char *) NULL);
+        execl("./BIN/decisionFunction", "./BIN/decisionFunction", (char *) NULL);
     }
+    
+    
+    
+    
     /*
             int i = 0;
             while(i < 6)
@@ -154,12 +159,13 @@ int main(int argc, char *argv[])
                 usleep(200);
             }
         */
-/*
+
+
     for (int i = 0; i < 7; i++)
     {
         int z = wait(NULL);
         printf("\n%d Has crashed stopped", z);
     }
-    */
+
     return 0;
 }
