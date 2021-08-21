@@ -50,7 +50,8 @@ int main(int argc, char *argv[])
         fprintf(fp, "#define FILEPATH \"./LOG/fileP3\"\n#define PIDPATH \"./LOG/filePid\"\n");
         fprintf(fp, "#define OUTPUT \"./LOG/voted_output\"\n#define SYSLOG \"./LOG/system_log\"\n");
         fprintf(fp, "#define DEFAULT_PROTOCOL %d\n#define SOCKET \"./LOG/socketP2\"\n", zero);
-        fprintf(fp, "#define SOCKETDF \"./LOG/socketDF\"\n#define PIPE \"./LOG/pipeP1\"\n\n");
+        fprintf(fp, "#define SOCKETDF \"./LOG/socketDF\"\n#define PIPE \"./LOG/pipeP1\"\n");
+        fprintf(fp, "#define I_AM_ALIVE SIGUSR2\n\n");
         fprintf(fp, "int savePidOnFile(char *name, int pid);\n");
         fprintf(fp, "int findPid(char *name);\n\n");
         fprintf(fp, "#endif // CONSTHEADER_H_INCLUDED\n");

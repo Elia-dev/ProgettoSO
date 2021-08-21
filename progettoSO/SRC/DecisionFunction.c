@@ -99,7 +99,7 @@ int main()
         	openFile();
             fprintf(fpOutput, "%d %d %d\n", sumP1, sumP2, sumP3); // Scrivo su file i risultati dei processi
             fclose(fpOutput);
-            kill(pidWatchDog, SIGUSR2); // Manda I_AM_ALIVE al watchdog
+            kill(pidWatchDog, I_AM_ALIVE); // Manda I_AM_ALIVE al watchdog
 
             if(sumP1 == sumP2 || sumP1 == sumP3 || sumP2 == sumP3)   // Eseguo il voto di maggioranza
             {
