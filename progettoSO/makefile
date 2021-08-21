@@ -1,4 +1,4 @@
-all: avvia ConstHeader.o InputManager.o inputManager P1.o p1 P2.o p2 P3.o p3 FailureManager.o failureManager DecisionFunction.o decisionFunction Watchdog.o watchdog
+all: ConstHeader.o InputManager.o inputManager P1.o p1 P2.o p2 P3.o p3 FailureManager.o failureManager DecisionFunction.o decisionFunction Watchdog.o watchdog
 
 watchdog: ./SRC/Watchdog.o ./SRC/ConstHeader.o
 		cc ./SRC/Watchdog.o ./SRC/ConstHeader.o -o watchdog
@@ -41,9 +41,6 @@ inputManager: ./SRC/InputManager.o ./SRC/ConstHeader.o
 
 InputManager.o: ./SRC/InputManager.c ./SRC/ConstHeader.h
 		cc -c ./SRC/InputManager.c
-		
-#avvia: ./SRC/Avvia.c
-	#cc ./SRC/Avvia.c -o avvia
 
 ConstHeader.o: ./SRC/ConstHeader.c ./SRC/ConstHeader.h
 		cc -c ./SRC/ConstHeader.c
