@@ -57,7 +57,6 @@ int main(int argc, char *argv[])
         else //Se la modalità di esecuzione passata non è valida termino
         {
             fclose(fp);
-            system("rm constHeader.h");
             printf("Invalid execution mode\n");
             exit(-1);
         }
@@ -76,7 +75,6 @@ int main(int argc, char *argv[])
     else
     {
         fclose(fp);
-        system("rm constHeader.h");
         printf("Invalid number of arguments\n");
         exit(-1);
     }
