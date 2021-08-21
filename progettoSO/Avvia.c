@@ -21,6 +21,22 @@ int main(int argc, char *argv[])
     */
     int zero = 0;
     int uno = 1;
+    FILE *fpDataset;
+    int c = 0;
+    do { 
+    	fpDataset = fopen(argv[2], "r"); // Provo a vedere se il file passato esiste davvero, se non esiste o non riesce ad aprirlo termino il programma
+    	if(fpDataset == NULL) {
+    		printf("MAIN PROCESS: ERROR OPENING DATASET\n");
+    		c++;
+    		sleep(1);
+    	}
+    	else {
+    		break;
+    	}
+    	if(c == 3) exit(-1);
+    }while(c < 3);
+    fclose(fpDataset);
+    
     FILE *fp = fopen("./SRC/ConstHeader.h", "w"); // Creazione file header
     FILE *fpPid  = fopen("filePid", "w"); // Creazione del file Pid
     fclose(fpPid);
