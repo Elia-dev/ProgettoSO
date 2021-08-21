@@ -79,9 +79,9 @@ int sum(char *str)
 
 int random_failure(int attivo)
 {
-    srand(time(0));
-    // Se random failure è attivo e il numero generato tra 0 e 9 è uguale a 2 allora genera una failure
-    if(attivo && (rand()%10) == 2)
+    srand(time(NULL) + 2);
+    // Se random failure è attivo e il numero generato tra 0 e 9 è uguale a 1 allora genera una failure
+    if(attivo && (rand()%10) == 1)
     {
         return 20;
     }
