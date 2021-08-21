@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
         execl("./BIN/p2", "./BIN/p2", (char *) NULL);
 
     }
-    usleep(40000);
+    usleep(50000);
     if (fork() == 0)
     {
         printf("--p3 Avviato\n");
