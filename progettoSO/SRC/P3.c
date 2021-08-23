@@ -57,9 +57,9 @@ int readLine (int fd, char *str)
 
 int random_failure(int attivo)
 {
-    srand(getpid());
-    // Se random failure è attivo e il numero generato tra 0 e 9 è uguale a 3 allora genera una failure
-    if(attivo && (rand()%10) == 3)
+    srand(time(NULL) + 3);
+    // Se random failure è attivo e il numero generato tra 0 e 9 è uguale a 1 allora genera una failure
+    if(attivo && (rand()%10) == 1)
     {
         return 30;
     }

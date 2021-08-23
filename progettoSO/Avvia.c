@@ -21,6 +21,22 @@ int main(int argc, char *argv[])
     */
     int zero = 0;
     int uno = 1;
+    FILE *fpDataset;
+    int c = 0;
+    do { 
+    	fpDataset = fopen(argv[2], "r"); // Provo a vedere se il file passato esiste davvero, se non esiste o non riesce ad aprirlo termino il programma
+    	if(fpDataset == NULL) {
+    		printf("MAIN PROCESS: ERROR OPENING DATASET\n");
+    		c++;
+    		sleep(1);
+    	}
+    	else {
+    		break;
+    	}
+    	if(c == 3) exit(-1);
+    }while(c < 3);
+    fclose(fpDataset);
+    
     FILE *fp = fopen("./SRC/ConstHeader.h", "w"); // Creazione file header
     FILE *fpPid  = fopen("filePid", "w"); // Creazione del file Pid
     fclose(fpPid);
@@ -41,7 +57,6 @@ int main(int argc, char *argv[])
         else //Se la modalità di esecuzione passata non è valida termino
         {
             fclose(fp);
-            system("rm constHeader.h");
             printf("Invalid execution mode\n");
             exit(-1);
         }
@@ -60,7 +75,6 @@ int main(int argc, char *argv[])
     else
     {
         fclose(fp);
-        system("rm constHeader.h");
         printf("Invalid number of arguments\n");
         exit(-1);
     }
@@ -102,7 +116,7 @@ int main(int argc, char *argv[])
         execl("./BIN/p2", "./BIN/p2", (char *) NULL);
 
     }
-    usleep(40000);
+    usleep(50000);
     if (fork() == 0)
     {
         printf("--p3 Avviato\n");

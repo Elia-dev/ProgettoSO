@@ -64,7 +64,7 @@ int sum(char *token)
 
 int random_failure(int attivo)
 {
-    srand(time(NULL));
+    srand(time(NULL) + 1);
     // Se random failure è attivo e il numero generato tra 0 e 9 è uguale ad 1 allora genera una failure
     if(attivo && (rand()%10) == 1)
     {

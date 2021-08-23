@@ -26,7 +26,7 @@ int main()
 	printf("WD: READY\n");
     savePidOnFile("WD", getpid());
     printf("WD: DOPO pid\n");
-    signal(SIGUSR2, resetCounter);
+    signal(I_AM_ALIVE, resetCounter);
     signal(SIGALRM, notifyFailureManager);
     alarm(2);
     
