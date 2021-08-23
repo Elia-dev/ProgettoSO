@@ -20,16 +20,13 @@ int openSocket() // Apertura socket per comunicare con Decision Function
     clientFd = socket (AF_UNIX, SOCK_STREAM, DEFAULT_PROTOCOL);
     serverUNIXAddress.sun_family = AF_UNIX;
     strcpy (serverUNIXAddress.sun_path, SOCKETDF);
-    do
-    {
+    do {
         connection = connect (clientFd, serverSockAddrPtr, serverLen);
-        if (connection == -1)
-        {
+        if (connection == -1) {
             printf("P1: Retrying socket connection in 1 sec\n");
             sleep (1);
         }
-    }
-    while (connection == -1);
+    } while (connection == -1);
 
     return clientFd;
 }
@@ -37,11 +34,9 @@ int openSocket() // Apertura socket per comunicare con Decision Function
 int readLine (int fd, char *str) // Legge una riga dal file passato
 {
     int n;
-    do
-    {
+    do {
         n = read(fd, str, 1);
-    }
-    while (n > 0 && *str++ != '\0');
+    }while (n > 0 && *str++ != '\0');
     return (n > 0); // Ritorna falso se arriva alla fine dell'input
 }
 
@@ -55,8 +50,7 @@ void createPipe() // Creazione pipe per comunicare con InputManager
 int sum(char *token)
 {
     int charSum = 0;
-    for(int i = 0; i < strlen(token); i++)
-    {
+    for(int i = 0; i < strlen(token); i++) {
         charSum += token[i]; // Somma tutti i caratteri provenienti dal token
     }
     return charSum;
@@ -66,8 +60,7 @@ int random_failure(int attivo)
 {
     srand(time(NULL) + 1);
     // Se random failure è attivo e il numero generato tra 0 e 9 è uguale ad 1 allora genera una failure
-    if(attivo && (rand()%10) == 1)
-    {
+    if(attivo && (rand()%10) == 1) {
         return 10;
     }
     else return 0;
@@ -99,14 +92,13 @@ int main()
 
     printf("P1: READY\n");
 
-    while(readLine (fd, str) > 0) // Legge finché trova qualcosa da leggere
-    {
+    while(readLine (fd, str)) { // Legge finché trova qualcosa da leggere
         charSum = 0;
         str[strlen(str) - 1] = '\0'; // Alla fine di ogni riga viene sovrascritto il carattere "end of trans. block" (valore ascii 23) con '\0'
         token = strtok(str, ",");
+        
         // Tramite strtok la riga viene spezzata ogni volta che si trova una virgola e il suo valore intero sommato
-        while( token != NULL )
-        {
+        while( token != NULL ) {
             charSum += sum(token);
             token = strtok(NULL, ",");
         }

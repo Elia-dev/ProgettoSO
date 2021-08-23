@@ -42,16 +42,13 @@ int openPipe() // Apertura della pipe per comunicare con P1
 {
     int fd;
 
-    do
-    {
+    do {
         fd = open (PIPE, O_WRONLY);
-        if (fd == -1)
-        {
+        if (fd == -1) {
             printf("IM: Error opening pipe\n");
             sleep (1);
         }
-    }
-    while (fd == -1);
+    }while (fd == -1);
 
     return fd;
 }
@@ -64,10 +61,10 @@ void sendToPipe(int fd, char *message)
 int openSharedFile() // Apertura del file condiviso per comunicare con P3
 {
     int fd;
-    do{
+    
+    do {
         fd = open(FILEPATH, O_CREAT|O_WRONLY|O_TRUNC, 0777);
-        if (fd == -1)
-        {
+        if (fd == -1) {
             printf("IM: Error opening shared file\n");
             sleep (1);
         }
@@ -108,7 +105,7 @@ int main()
     }while(car != '\n');
 
     // Conta dimensioni righe
-    do{
+    do {
         car = fgetc(fp);
         dimRiga++; // Conta di quanti caratteri è lunga la seconda riga, essendo un file di log si assume che le righe abbiano circa la stessa lunghezza
     }
@@ -119,8 +116,7 @@ int main()
     dimRiga += 50; // Assumendo che le righe possano variare la loro lunghezza di qualche carattere, per sicurezza leggiamo 50 caratteri in più
     char buffer[dimRiga];
 
-    while(fgets(buffer, dimRiga, fp))  // Scorro tutto il file
-    {
+    while(fgets(buffer, dimRiga, fp)) {  // Scorro tutto il file
         sendToPipe(fd, buffer);
         sendToSocket(buffer);
         sendToSharedFile(fd3, buffer);

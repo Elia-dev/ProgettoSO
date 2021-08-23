@@ -5,7 +5,8 @@
 #include "ConstHeader.h"
 
 // Genera il pid del processo e lo scrive in un file contenente tutti i processi
-int savePidOnFile(char *name, int pid) {
+int savePidOnFile(char *name, int pid) 
+{
     FILE *fp;
     do {
         fp = fopen(PIDPATH, "a");
@@ -29,15 +30,13 @@ int findPid(char *name)
     do
     {
         fp = fopen(PIDPATH, "r");
-        if(fp == NULL)
-        {
+        if(fp == NULL) {
             printf("%s: error opening file pid\n", name);
         }
     }
     while(fp == NULL);
 
-    do
-    {
+    do {
         fgets(result, 15, fp);
     }
     while(result[0] != name[0] || result[1] != name[1]);  // Legge i vari pid finché non trova quello richiesto

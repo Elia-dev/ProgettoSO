@@ -44,23 +44,20 @@ int readProcess() // Legge la somma mandata dal client
     return sum;
 }
 
-void openFile() { //FILE *fpOutput, FILE *fpSysLog
-	do
-    {
+void openFile() 
+{
+	do {
         fpSysLog = fopen(SYSLOG, "a");
-        if(fpSysLog == NULL)
-        {
+        if(fpSysLog == NULL) {
             printf("DF: error opening system_log\n");
             sleep(1);
         }
     }
     while(fpSysLog == NULL);
     
-    do
-    {
+    do {
         fpOutput = fopen(OUTPUT, "a");
-        if(fpOutput == NULL)
-        {
+        if(fpOutput == NULL) {
             printf("DF: error opening voted_output\n");
             sleep(1);
         }
@@ -88,27 +85,24 @@ int main()
 
     printf("DF:  READY\n");
 
-    do
-    {
+    do {
         sumP1 = readProcess();
         sumP2 = readProcess();
         sumP3 = readProcess();
 
-        if(sumP1 > 0 && sumP2 > 0 && sumP3 > 0) // Se viene ricevuta una somma negativa (quindi i processi hanno finito di leggere) salto la parte di scrittura su file
-        {
+		// Se viene ricevuta una somma negativa (quindi i processi hanno finito di leggere) salto la parte di scrittura su file
+        if(sumP1 > 0 && sumP2 > 0 && sumP3 > 0) {
         	openFile();
             fprintf(fpOutput, "%d %d %d\n", sumP1, sumP2, sumP3); // Scrivo su file i risultati dei processi
             fclose(fpOutput);
             kill(pidWatchDog, I_AM_ALIVE); // Manda I_AM_ALIVE al watchdog
 
-            if(sumP1 == sumP2 || sumP1 == sumP3 || sumP2 == sumP3)   // Eseguo il voto di maggioranza
-            {
+            if(sumP1 == sumP2 || sumP1 == sumP3 || sumP2 == sumP3) {  // Eseguo il voto di maggioranza
                 fprintf(fpSysLog, "SUCCESSO\n");
                 fclose(fpSysLog);
                 printf("DF: SUCCESS\n");
             }
-            else
-            {
+            else{
                 fprintf(fpSysLog, "FALLIMENTO\n");
                 fclose(fpSysLog);
                 printf("DF: FAILURE\n");
@@ -116,8 +110,7 @@ int main()
             }
         }
 
-    }
-    while(sumP1 > 0 || sumP2 > 0 || sumP3 > 0);
+    }while(sumP1 > 0 || sumP2 > 0 || sumP3 > 0);
 
     close(serverFd);
     unlink(SOCKETDF);

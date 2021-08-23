@@ -3,7 +3,7 @@
 	Filippo Zaccari 7030220 filippo.zaccari@stud.unifi.it
 	Elia Matteini 7033383 elia.matteini@stud.unifi.it
 	Ilaria Catone 7020875 ilaria.catone@stud.unifi.it
-	Data di consegna: 22/08/2021
+	Data di consegna: 23/08/2021
 ******************************************************************/
 
 #include <stdio.h>
@@ -41,21 +41,17 @@ int main(int argc, char *argv[])
     FILE *fpPid  = fopen("filePid", "w"); // Creazione del file Pid
     fclose(fpPid);
 	usleep(100);
-    if(argc == 3)  // Se sono stati passati meno di due argomenti termino
-    {
+    if(argc == 3) { // Se sono stati passati meno di due argomenti termino
         fprintf(fp, "#ifndef CONSTHEADER_H_INCLUDED\n#define CONSTHEADER_H_INCLUDED\n\n");
 
-        if(strcmp(argv[1], "NORMALE") == 0)
-        {
+        if(strcmp(argv[1], "NORMALE") == 0) {
             fprintf(fp, "#define MODEXEC %d\n", zero);
         }
-        else if(strcmp(argv[1], "FALLIMENTO") == 0)
-        {
+        else if(strcmp(argv[1], "FALLIMENTO") == 0) {
             fprintf(fp, "#define MODEXEC %d\n", uno);
 
         }
-        else //Se la modalità di esecuzione passata non è valida termino
-        {
+        else { //Se la modalità di esecuzione passata non è valida termino
             fclose(fp);
             printf("Invalid execution mode\n");
             exit(-1);
@@ -72,8 +68,7 @@ int main(int argc, char *argv[])
         fprintf(fp, "#endif // CONSTHEADER_H_INCLUDED\n");
         fclose(fp);
     }
-    else
-    {
+    else {
         fclose(fp);
         printf("Invalid number of arguments\n");
         exit(-1);
@@ -85,52 +80,44 @@ int main(int argc, char *argv[])
     system("make install");
 	usleep(50000);
 
-	if (fork() == 0)
-    {
+	if (fork() == 0) {
         printf("--watchDog Avviato\n");
         execl("./BIN/watchdog", "./BIN/watchdog", (char *) NULL);
     }
     usleep(80000);
-    if (fork() == 0)
-    {
+    if (fork() == 0) {
         printf("--failureManager Avviato\n");
         execl("./BIN/failureManager", "./BIN/failureManager", (char *) NULL);
 
     }
     usleep(70000);
-    if (fork() == 0)
-    {
+    if (fork() == 0) {
         printf("--inputManager Avviato\n");
         execl("./BIN/inputManager", "./BIN/inputManager", (char *) NULL);
     }
     usleep(60000);
-    if (fork() == 0)
-    {
+    if (fork() == 0) {
         printf("--p1 Avviato\n");
         execl("./BIN/p1", "./BIN/p1", (char *) NULL);
     }
     usleep(50000);
-    if (fork() == 0)
-    {
+    if (fork() == 0) {
         printf("--p2 Avviato\n");
         execl("./BIN/p2", "./BIN/p2", (char *) NULL);
 
     }
     usleep(50000);
-    if (fork() == 0)
-    {
+    if (fork() == 0) {
         printf("--p3 Avviato\n");
         execl("./BIN/p3", "./BIN/p3", (char *) NULL);
     }
     usleep(30000);
-    if (fork() == 0)
-    {
+    if (fork() == 0) {
         printf("--decisionFunction Avviato\n");
         execl("./BIN/decisionFunction", "./BIN/decisionFunction", (char *) NULL);
     }
 
-    for (int i = 0; i < 7; i++)
-    {
+    for (int i = 0; i < 7; i++) {
         int z = wait(NULL);
         printf("%d: STOPPED\n", z);
     }

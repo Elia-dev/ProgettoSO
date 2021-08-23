@@ -5,9 +5,9 @@
 #include <signal.h>
 #include "ConstHeader.h"
 
-void endProgram() {
+void endProgram() 
+{
     printf("SIGUSR2 received, killing remaining processes [watchDog, failureManager]\n");
-
     system("killall watchdog & killall failureManager"); // Uccide gli ultimi processi rimasti in vita
 }
 
@@ -18,7 +18,6 @@ void killAll() // Quando riceve il segnale termina tutti i processi
     unlink(SOCKET);
     unlink(SOCKETDF);
     unlink(PIPE);
-
     system("killall p1 & killall p2 & killall p3 & killall decisionFunction & killall inputManager & killall watchdog & killall failureManager");
 }
 

@@ -30,8 +30,7 @@ int main()
     signal(SIGALRM, notifyFailureManager);
     alarm(2);
     
-    while(1)
-    {
+    while(1) {
         usleep(100);
     }
     return 0;

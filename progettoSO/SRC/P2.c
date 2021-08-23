@@ -18,16 +18,13 @@ int openInputManagerSocket()
     clientFd = socket (AF_UNIX, SOCK_STREAM, DEFAULT_PROTOCOL);
     serverUNIXAddress.sun_family = AF_UNIX;
     strcpy (serverUNIXAddress.sun_path, SOCKET);
-    do
-    {
+    do {
         connection = connect (clientFd, serverSockAddrPtr, serverLen);
-        if (connection == -1)
-        {
+        if (connection == -1) {
             printf("P2->InputManager: Retrying connection in 1 sec\n");
             sleep (1);
         }
-    }
-    while (connection == -1);
+    } while (connection == -1);
 
     return clientFd;
 }
@@ -42,16 +39,13 @@ int openDecisionFunctionSocket()
     clientFd = socket (AF_UNIX, SOCK_STREAM, DEFAULT_PROTOCOL);
     serverUNIXAddress.sun_family = AF_UNIX;
     strcpy (serverUNIXAddress.sun_path, SOCKETDF);
-    do
-    {
+    do {
         connection = connect (clientFd, serverSockAddrPtr, serverLen);
-        if (connection == -1)
-        {
+        if (connection == -1) {
             printf("P2->DecisionFunction: Retrying connection in 1 sec\n");
             sleep (1);
         }
-    }
-    while (connection == -1);
+    }while (connection == -1);
 
     return clientFd;
 }
@@ -59,19 +53,16 @@ int openDecisionFunctionSocket()
 int readLine (int fd, char *str)
 {
     int n;
-    do
-    {
+    do {
         n = read(fd, str, 1);
-    }
-    while (n > 0 && *str++ != '\0');
+    } while (n > 0 && *str++ != '\0');
     return (n > 0); // Ritorna falso se arriva alla fine dell'input
 }
 
 int sum(char *str)
 {
     int charSum = 0;
-    for(int i = strlen(str) - 2; i >= 0; i--)   // -2 perchè l'ultimo carattere è '\n'
-    {
+    for(int i = strlen(str) - 2; i >= 0; i--) { // -2 perchè l'ultimo carattere è '\n'
         charSum += str[i] * (str[i] != 44); // 44 = virgola, ignora la virgola
     }
     return charSum;
@@ -81,8 +72,7 @@ int random_failure(int attivo)
 {
     srand(time(NULL) + 2);
     // Se random failure è attivo e il numero generato tra 0 e 9 è uguale a 1 allora genera una failure
-    if(attivo && (rand()%10) == 1)
-    {
+    if(attivo && (rand()%10) == 1) {
         return 20;
     }
     else return 0;
@@ -91,7 +81,6 @@ int random_failure(int attivo)
 void sendToDecisionFunction(int clientDecisionFunction, int sum)
 {
     int tmp;
-
     tmp = htonl(sum); // Converte sum in network Byte Order
     write(clientDecisionFunction, &tmp, sizeof(tmp));
 }
@@ -107,8 +96,7 @@ int main()
     clientFd = openInputManagerSocket();
     printf("P2: READY\n");
     int count = 0;
-    while(readLine(clientFd, str) > 0)  // Legge finché trova qualcosa da leggere
-    {
+    while(readLine(clientFd, str)) { // Legge finché trova qualcosa da leggere
         charSum = sum(str);
         charSum += random_failure(MODEXEC);
         clientDecisionFunction = openDecisionFunctionSocket();
